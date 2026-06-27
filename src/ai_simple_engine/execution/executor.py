@@ -1,12 +1,16 @@
 from ai_simple_engine.graph.graph_validator import GraphValidator
 from ai_simple_engine.graph.graph_builder import GraphBuilder
-from ai_simple_engine.exceptions.execution_error import ExecutionError
 from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.graph.operation.fingerprint_builder import FingerprintBuilder
 from ai_simple_engine.graph.port_reference import PortReference
+from ai_simple_engine.exceptions.execution_error import ExecutionError
 from ai_simple_engine.execution.execution_planner import ExecutionPlanner
 from ai_simple_engine.execution.execution_context import ExecutionContext
-from collections.abc import Mapping
+from ai_simple_engine.execution.operation_runner.local_operation_runner import LocalOperationRunner
+from ai_simple_engine.execution.runtime_value_resolver.port_reference_resolver import PortReferenceRuntimeValueResolver
+from ai_simple_engine.execution.runtime_value_resolver.resource_handle_resolver import ResourceHandleRuntimeValueResolver
+
+from collections.abc import Mapping, Sequence
 from typing import Iterable, Union
 
 
@@ -22,6 +26,11 @@ class Executor:
         self._graph_builder = GraphBuilder()
         self._validator = GraphValidator()
         self._planner = ExecutionPlanner()
+        self._runner = LocalOperationRunner()
+        self._value_resolvers = [
+            PortReferenceRuntimeValueResolver(),
+            ResourceHandleRuntimeValueResolver()
+        ]
 
     async def run(
         self,
@@ -66,38 +75,19 @@ class Executor:
         operation._begin_execution(resolved_inputs)
 
         try:
-            outputs = await operation.execute(context)
+            outputs = await self._runner.run(
+                operation,
+                context
+            )
 
         finally:
             operation._end_execution()
-        
-        context.store(
-            operation,
-            outputs
-        )
-
-        context.cache.put(
-            fingerprint,
-            outputs
-        )
-
-        return
-
-        parameters = self._resolve_parameters(
-            operation,
-            context
-        )
-
-        outputs = await operation.execute(
-            context,
-            **parameters
-        )
 
         self._validate_outputs(
             operation,
             outputs
         )
-
+        
         context.store(
             operation,
             outputs
@@ -116,7 +106,6 @@ class Executor:
         parameters = {}
 
         for field in operation.model_fields:
-
             value = getattr(operation, field)
 
             parameters[field] = self._resolve_value(
@@ -131,32 +120,42 @@ class Executor:
         value,
         context: ExecutionContext
     ):
-        if isinstance(value, PortReference):
-            return context.output(
-                value.operation,
-                value.name
-            )
+        """
+        This will allow us to resolve dynamically based
+        on our resolvers, so we could add something in
+        the future and we just need to add the resolver.
+        """
+        for resolver in self._value_resolvers:
+            if resolver.is_supported(value):
+                resolved = resolver.resolve(
+                    value,
+                    context
+                )
 
-        if isinstance(value, list):
-            return [
-                self._resolve_value(v, context)
-                for v in value
-            ]
-
-        if isinstance(value, tuple):
-            return tuple(
-                self._resolve_value(v, context)
-                for v in value
-            )
-
+                # Maybe we need to resolve more
+                return self._resolve_value(
+                    resolved,
+                    context
+                )
+        
         if isinstance(value, Mapping):
             return {
                 k: self._resolve_value(v, context)
                 for k, v in value.items()
             }
+        
+        # list, tuple, etc.
+        if (
+            isinstance(value, Sequence) and
+            not isinstance(value, (str, bytes))
+        ):
+            return type(value)(
+                self._resolve_value(v, context)
+                for v in value
+            )
 
         return value
-    
+
     def _validate_outputs(
         self,
         operation: Operation,

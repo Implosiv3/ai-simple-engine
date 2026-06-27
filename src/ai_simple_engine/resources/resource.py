@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class Resource(
@@ -7,4 +7,14 @@ class Resource(
     """
     Base class for any reusable resource.
     """
-    pass
+    
+    @abstractmethod
+    async def load(
+        self
+    ):
+        ...
+
+    async def unload(
+        self
+    ):
+        pass
