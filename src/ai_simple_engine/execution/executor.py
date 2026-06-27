@@ -6,10 +6,8 @@ from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.exceptions.execution_error import ExecutionError
 from ai_simple_engine.execution.execution_planner import ExecutionPlanner
 from ai_simple_engine.execution.execution_context import ExecutionContext
-from ai_simple_engine.execution.operation_runner.local_operation_runner import LocalOperationRunner
-from ai_simple_engine.execution.runtime_value_resolver.port_reference_resolver import PortReferenceRuntimeValueResolver
-from ai_simple_engine.execution.runtime_value_resolver.resource_handle_resolver import ResourceHandleRuntimeValueResolver
-
+from ai_simple_engine.execution.operation_runner.abstract import OperationRunner
+from ai_simple_engine.execution.runtime_value_resolver.abstract import RuntimeValueResolver
 from collections.abc import Mapping, Sequence
 from typing import Iterable, Union
 
@@ -21,28 +19,28 @@ class Executor:
     """
 
     def __init__(
-        self
+        self,
+        *,
+        graph_builder: GraphBuilder,
+        operation_runner: OperationRunner,
+        runtime_value_resolvers: list[RuntimeValueResolver]
     ):
-        self._graph_builder = GraphBuilder()
+        self._graph_builder = graph_builder
         self._validator = GraphValidator()
         self._planner = ExecutionPlanner()
-        self._runner = LocalOperationRunner()
-        self._value_resolvers = [
-            PortReferenceRuntimeValueResolver(),
-            ResourceHandleRuntimeValueResolver()
-        ]
+        self._operation_runner = operation_runner
+        self._runtime_values_resolvers = runtime_value_resolvers
 
     async def run(
         self,
-        outputs: PortReference | Iterable[PortReference]
+        outputs: PortReference | Iterable[PortReference],
+        context: ExecutionContext
     ) -> ExecutionContext:
         graph = self._graph_builder.build(outputs)
 
         self._validator.validate(graph)
 
         plan = self._planner.build(graph)
-
-        context = ExecutionContext()
 
         for node in plan.nodes:
             await self._execute(
@@ -75,7 +73,7 @@ class Executor:
         operation._begin_execution(resolved_inputs)
 
         try:
-            outputs = await self._runner.run(
+            outputs = await self._operation_runner.run(
                 operation,
                 context
             )
@@ -125,7 +123,7 @@ class Executor:
         on our resolvers, so we could add something in
         the future and we just need to add the resolver.
         """
-        for resolver in self._value_resolvers:
+        for resolver in self._runtime_values_resolvers:
             if resolver.is_supported(value):
                 resolved = resolver.resolve(
                     value,
