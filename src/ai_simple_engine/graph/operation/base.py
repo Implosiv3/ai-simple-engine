@@ -1,65 +1,58 @@
 from ai_simple_engine.graph.input import Input
 from ai_simple_engine.graph.output import Output
 from ai_simple_engine.graph.port_reference import PortReference
-from uuid import UUID, uuid4
-from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
+from uuid import uuid4
 from abc import ABC, abstractmethod
 from typing import Union
 
 
 class Operation(
-    BaseModel,
     ABC
 ):
-    model_config = ConfigDict(
-        arbitrary_types_allowed = True,
-        extra = 'forbid'
-    )
-
-    id: UUID = Field(
-        default_factory = uuid4,
-        frozen = True
-    )
-
     _inputs: dict[str, Input] = {}
     _outputs: dict[str, Output] = {}
-    _graph = PrivateAttr(default=None)
-    """
-    Non-serialized internal execution data.
-    """
-
-    _connections: dict[str, Union[PortReference, object]] = PrivateAttr(default_factory=dict)
 
     def __init__(
         self,
-        **data
-    ):
-        inputs = {}
-
-        for name in self.inputs():
-            if name in data:
-                inputs[name] = data.pop(name)
-
-        super().__init__(**data)
-
-        self._connections = inputs
-
-    def __init_subclass__(
-        cls, 
         **kwargs
     ):
-        super().__init_subclass__(**kwargs)
+        self.id = uuid4()
+        self._connections: dict[str, object] = {}
+        self._resolved_inputs: dict[str, object] = {}
+        
+        unknown = set(kwargs) - self.inputs().keys()
+        if unknown:
+            raise TypeError(f'Unknown inputs: {', '.join(unknown)}')
+
+        for name, port in self.inputs().items():
+            if name in kwargs:
+                value = kwargs[name]
+            elif port.has_default:
+                value = port.default
+            elif port.optional:
+                value = None
+            else:
+                raise TypeError(f'Missing required input "{name}".')
+
+            port.validate(value)
+
+            self._connections[name] = value
+
+    def __init_subclass__(
+        cls,
+    ):
+        super().__init_subclass__()
 
         cls._inputs = {}
         cls._outputs = {}
 
-        for name, value in vars(cls).items():
+        for value in vars(cls).values():
             if isinstance(value, Input):
-                cls._inputs[name] = value
+                cls._inputs[value.name] = value
             elif isinstance(value, Output):
-                cls._outputs[name] = value
+                cls._outputs[value.name] = value
             else:
-                raise Exception('The operation parameter provided is not expected.')
+                raise Exception('The operation parameter provided is not an "Input" nor "Output" instance.')
 
     def __hash__(
         self
@@ -86,6 +79,16 @@ class Operation(
     ) -> None:
         self._resolved_inputs.clear()
 
+    def expand(
+        self
+    ) -> Union[PortReference, None]:
+        """
+        The ability to expand it into different
+        operations. It doesn't exist if it is a
+        simple operation.
+        """
+        return None
+
     @classmethod
     def inputs(
         cls
@@ -97,6 +100,22 @@ class Operation(
         cls
     ) -> dict[str, Output]:
         return cls._outputs
+    
+    @classmethod
+    def schema(
+        cls
+    ) -> dict:
+        return {
+            'name': cls.__name__,
+            'inputs': {
+                name: port.schema()
+                for name, port in cls.inputs().items()
+            },
+            'outputs': {
+                name: port.schema()
+                for name, port in cls.outputs().items()
+            }
+        }
 
     @abstractmethod
     async def execute(
@@ -104,3 +123,5 @@ class Operation(
         context
     ) -> dict[str, object]:
         ...
+
+    

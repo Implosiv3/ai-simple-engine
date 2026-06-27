@@ -1,12 +1,13 @@
 from ai_simple_engine.graph.graph_validator import GraphValidator
 from ai_simple_engine.graph.graph_builder import GraphBuilder
+from ai_simple_engine.exceptions.execution_error import ExecutionError
 from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.graph.operation.fingerprint_builder import FingerprintBuilder
 from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.execution.execution_planner import ExecutionPlanner
 from ai_simple_engine.execution.execution_context import ExecutionContext
 from collections.abc import Mapping
-from typing import Iterable
+from typing import Iterable, Union
 
 
 class Executor:
@@ -163,40 +164,48 @@ class Executor:
     ):
         expected = operation.outputs()
 
-        # Falta alguna salida
-        missing = expected.keys() - outputs.keys()
+        for name, port in expected.items():
+            if name not in outputs:
+                raise ExecutionError(f'The output "{name}" was not an expected output.')
 
-        if missing:
-            raise RuntimeError(
-                f'Missing outputs: {missing}'
-            )
+            value = outputs[name]
 
-        # Hay salidas de más
-        extra = outputs.keys() - expected.keys()
-
-        if extra:
-            raise RuntimeError(
-                f'Unknown outputs: {extra}'
-            )
+            if (
+                port.type.python_type is not object and
+                not isinstance(value, port.type.python_type)
+            ):
+                # TODO: Maybe say what was expected (?)
+                raise ExecutionError(f'The output "{name}" type is not the expected one.')
     
 
 async def execute(
-    outputs: PortReference | Iterable[PortReference]
+    targets: Union[Operation, PortReference, Iterable[Union[Operation, PortReference]]]
 ):
     executor = Executor()
 
-    context = await executor.run(outputs)
+    context = await executor.run(targets)
 
-    if isinstance(outputs, PortReference):
+    if isinstance(targets, Operation):
+        return None
+
+    if isinstance(targets, PortReference):
         return context.output(
-            outputs.operation,
-            outputs.name
+            targets.operation,
+            targets.name
         )
 
-    return [
-        context.output(
-            output.operation,
-            output.name
-        )
-        for output in outputs
-    ]
+    results = []
+
+    for target in targets:
+        if isinstance(target, Operation):
+            results.append(None)
+
+        else:
+            results.append(
+                context.output(
+                    target.operation,
+                    target.name
+                )
+            )
+
+    return results

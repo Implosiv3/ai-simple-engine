@@ -1,17 +1,34 @@
+from ai_simple_engine.resources.resource_handle import ResourceHandle
 from dataclasses import dataclass
-from typing import Union
+from typing import Union, TypeVar, Generic
 
 
-@dataclass(frozen = True, slots = True)
-class DataType:
+T = TypeVar('T')
+
+class DataType(
+    Generic[T]
+):
     """
-    Represents a type that can travel through the graph.
-
-    Type are compared by name.
+    Our engine's data type class, that defines some
+    conditions but also the `python_type` that is
+    expected.
+    """
+    
+    python_type: type[T]
+    """
+    The python type of this data type. This can be
+    used to validate it.
     """
 
-    name: str
-    parent: Union['DataType', None] = None
+    def __init__(
+        self,
+        name: str,
+        python_type: type[T],
+        parent: Union['DataType', None] = None
+    ):
+        self.name = name
+        self.python_type = python_type
+        self.parent = parent
 
     def is_assignable_from(
         self,
@@ -26,7 +43,22 @@ class DataType:
             current = current.parent
 
         return False
-
+    
+    def validate(
+        self,
+        value: object
+    ) -> None:
+        if not isinstance(value, self.python_type):
+            raise TypeError(f'Expected "{self.python_type.__name__}", got "{type(value).__name__}".')
+        
+    def schema(
+        self
+    ) -> dict:
+        return {
+            'name': self.name,
+            'python_type': self.python_type.__name__
+        }
+    
     def __str__(
         self
     ) -> str:
@@ -36,8 +68,6 @@ class DataType:
         self
     ) -> str:
         return f'DataType({self.name!r})'
-    
-
 
 
 
@@ -45,19 +75,54 @@ class DataType:
 """
     -- Specific types below --
 """
-TENSOR = DataType('Tensor')
+TENSOR = DataType(
+    name = 'Tensor',
+    python_type = 'torch.Tensor', # torch.Tensor, but I don't want import
+    parent = None
+)
 IMAGE = DataType(
-    'Image',
+    name = 'Image',
+    python_type = 'PIL.Image.Image', # PIL.Image.Image, but I don't want import
     parent = TENSOR
 )
 LATENT = DataType(
-    'Latent',
+    name = 'Latent',
+    python_type = 'torch.Tensor', # torch.Tensor, but I don't want import
     parent = TENSOR
 )
-MODEL = DataType('Model')
-AUDIO = DataType('Audio')
-STRING = DataType('String')
-FLOAT = DataType('Float')
-INT = DataType('Int')
-BOOLEAN = DataType('Boolean')
+MODEL = DataType(
+    name = 'Model',
+    python_type = ResourceHandle,
+    parent = None
+)
+AUDIO = DataType(
+    name = 'Audio',
+    python_type = 'np.ndarray', # np.ndarray, but i don't want import
+    parent = None # TODO: TENSOR maybe (?)
+)
+STRING = DataType(
+    name = 'String',
+    python_type = str,
+    parent = None
+)
+FLOAT = DataType(
+    name = 'Float',
+    python_type = float,
+    parent = None
+)
+INT = DataType(
+    name = 'Int',
+    python_type = int,
+    parent = None
+)
+BOOLEAN = DataType(
+    name = 'Boolean',
+    python_type = bool,
+    parent = None
+)
+ANY = DataType(
+    name = 'any',
+    python_type = object,
+    parent = None
+)
 

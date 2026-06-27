@@ -1,23 +1,19 @@
 from ai_simple_engine.types.data_type import DataType
 from ai_simple_engine.graph.port_reference import PortReference
-from typing import Union
+from ai_simple_engine.graph.port import Port
 
 
-class Output:
-
-    def __init__(
-        self,
-        type: DataType
-    ):
-        self.DataType = type
-        self.name: Union[str, None] = None
-
-    def __set_name__(
-        self, 
-        owner, 
-        name
-    ):
-        self.name = name
+class Output(
+    Port
+):
+    # def __init__(
+    #     self,
+    #     type: DataType
+    # ):
+    #     super().__init__(
+    #         type = type,
+    #         name = None
+    #     )
 
     def __get__(
         self,

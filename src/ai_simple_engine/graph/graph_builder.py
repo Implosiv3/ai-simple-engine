@@ -1,96 +1,81 @@
 from ai_simple_engine.graph.graph import Graph
 from ai_simple_engine.graph.operation.base import Operation
-from ai_simple_engine.graph.operation.composite_operation import CompositeOperation
 from ai_simple_engine.graph.port_reference import PortReference
-from typing import Union, Iterable
+from typing import Union, Iterable, Mapping, Sequence
+from uuid import UUID
 
 
 class GraphBuilder:
 
     def build(
         self,
-        outputs: Union[PortReference, Iterable[PortReference]]
+        targets: Union[Operation, PortReference, Iterable[Union[Operation, PortReference]]]
     ) -> Graph:
-        if isinstance(outputs, PortReference):
-            outputs = [outputs]
+        if isinstance(targets, (Operation, PortReference)):
+            targets = [targets]
 
-        operations: list[Operation] = []
-        visited: set[int] = set()
+        operations: dict[UUID, Operation] = {}
 
-        for output in outputs:
-            self._visit(
-                output.operation,
-                operations,
-                visited
-            )
+        for target in targets:
+            if isinstance(target, Operation):
+                self._visit_operation(target, operations)
+            elif isinstance(target, PortReference):
+                self._visit_operation(target.operation, operations)
+            else:
+                raise TypeError(f'Unsupported target: {type(target)}')
 
-        return Graph(operations)
+        return Graph(
+            list(operations.values())
+        )
     
-    def _visit(
+    def _visit_operation(
         self,
         operation: Operation,
-        operations: list[Operation],
-        visited: set[int]
-    ) -> None:
-        if isinstance(operation, CompositeOperation):
-            output = operation.build()
-
-            self._visit(output.operation)
-
+        operations: dict[UUID, Operation]
+    ):
+        if operation.id in operations:
             return
         
-        operation_id = id(operation)
+        expanded = operation.expand()
 
-        if operation_id in visited:
-            return
-
-        visited.add(operation_id)
-
-        for dependency in self._dependencies(operation):
-            self._visit(
-                dependency,
-                operations,
-                visited
+        if expanded is not None:
+            self._visit_operation(
+                expanded.operation,
+                operations
             )
 
-        operations.append(operation)
+            return
 
-    def _dependencies(
+        operations[operation.id] = operation
+
+        for value in operation._connections.values():
+            self._visit_value(
+                value,
+                operations
+            )
+
+    def _visit_value(
         self,
-        operation: Operation
-    ) -> list[Operation]:
+        value,
+        operations: dict[UUID, Operation]
+    ):
+        if isinstance(value, PortReference):
+            self._visit_operation(
+                value.operation,
+                operations
+            )
 
-        dependencies = []
+            return
 
-        for field in operation.model_fields:
+        if isinstance(value, Mapping):
+            for item in value.values():
+                self._visit_value(item, operations)
 
-            value = getattr(operation, field)
+            return
 
-            for reference in find_port_references(value):
-                dependencies.append(reference.operation)
-
-        return dependencies
-    
-
-
-# TODO: Move to a utils (?)
-from collections.abc import Mapping
-from collections.abc import Sequence
-
-
-def find_port_references(value):
-    if isinstance(value, PortReference):
-        yield value
-        return
-
-    if isinstance(value, Mapping):
-
-        for v in value.values():
-            yield from find_port_references(v)
-
-        return
-
-    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
-
-        for v in value:
-            yield from find_port_references(v)
+        if (
+            isinstance(value, Sequence) and
+            not isinstance(value, (str, bytes))
+        ):
+            for item in value:
+                self._visit_value(item, operations)

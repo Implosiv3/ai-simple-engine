@@ -1,17 +1,86 @@
 from ai_simple_engine.types.data_type import DataType
+from ai_simple_engine.types.validator.abstract import DataTypeValidator
+from ai_simple_engine.types.validator.exceptions import ValidationError
+from ai_simple_engine.graph.port_reference import PortReference
+from ai_simple_engine.graph.port import Port
 from typing import Union
 
 
-class Input:
+MISSING = object
+
+class Input(
+    Port
+):
+    
+    @property
+    def has_default(
+        self
+    ) -> bool:
+        return self.default is not MISSING
 
     def __init__(
         self,
         type: DataType,
-        optional: bool = False
+        *,
+        default = MISSING,
+        is_optional: bool = False,
+        validators: Union[list[DataTypeValidator], None] = None,
+        description: Union[str, None] = None
     ):
-        self.type = type
-        self.optional = optional
-        self.name: Union[str, None] = None
+        super().__init__(
+            type = type,
+            description = description
+        )
+
+        self.default = default
+        self.is_optional = is_optional
+        self.validators = validators
+
+        # Previously, due to the '__set_name__'
+        # self.name: Union[str, None] = None
+
+    def validate(
+        self,
+        value
+    ):
+        if isinstance(value, PortReference):
+            return
+        
+        if value is None:
+            if self.optional:
+                return
+
+            raise ValidationError(f'"{self.name}" cannot be None.')
+
+        self.type.validate(value)
+        
+        for validator in self.validators:
+            validator.validate(
+                self.name,
+                value
+            )
+
+    def schema(
+        self
+    ):
+        schema = super().schema()
+
+        default_value = (
+            None
+            if self.default is MISSING else
+            self.default
+        )
+
+        schema.update({
+            'default': default_value,
+            'is_optional': self.optional,
+            'validators': [
+                validator.schema()
+                for validator in self.validators
+            ]
+        })
+
+        return schema
 
     def __get__(
         self,
@@ -26,9 +95,4 @@ class Input:
 
         return instance._connections[self.name]
 
-    def __set_name__(
-        self,
-        owner,
-        name
-    ):
-        self.name = name
+    

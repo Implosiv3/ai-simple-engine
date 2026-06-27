@@ -1,4 +1,5 @@
 from ai_simple_engine.graph.operation.base import Operation
+from ai_simple_engine.graph.port_reference import PortReference
 from abc import abstractmethod
 
 
@@ -25,6 +26,16 @@ class CompositeOperation(
     operations in which each individual
     operation will be checked and evaluated.
     """
+
+    def expand(
+        self
+    ) -> PortReference:
+        """
+        The ability to expand this composite operation
+        into the different and specific operations that
+        compose it.
+        """
+        return self.build()
 
     @classmethod
     @abstractmethod

@@ -13,7 +13,7 @@ class Blur(
         default = 10,
         ge = 0
     )
-    image = Input(IMAGE)
+    image = Input(IMAGE, name = 'image')
     result = Output(IMAGE)
 
     async def execute(

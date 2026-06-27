@@ -8,8 +8,8 @@ class RunModel(
     Operation
 ):
 
-    model = Input(MODEL)
-    image = Input(IMAGE)
+    model = Input(MODEL, name = 'model')
+    image = Input(IMAGE, name = 'image')
     result = Output(IMAGE)
 
     async def execute(

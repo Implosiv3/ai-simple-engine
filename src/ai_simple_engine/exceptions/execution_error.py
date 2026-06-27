@@ -1,5 +1,7 @@
 
 
 
-class ExecutionError:
+class ExecutionError(
+    Exception
+):
     ...
