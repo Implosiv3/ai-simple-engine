@@ -11,6 +11,7 @@ from ai_simple_engine.graph.graph_builder import GraphBuilder
 from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.resources.resources_manager import ResourceManager
+from ai_simple_engine.models.model_repository import ModelRepository
 from typing import Union, Iterable
 
 
@@ -24,14 +25,27 @@ class Engine:
     def __init__(
         self,
         *,
+        model_repository: Union[ModelRepository, None] = None,
         cache: Union[Cache, None] = None,
         resource_manager: Union[ResourceManager, None] = None,
         operation_runner: Union[OperationRunner, None] = None,
         runtime_value_resolvers: Union[Iterable[RuntimeValueResolver], None] = None,
     ):
-        # TODO: I don't have memory cache
+        self.model_repository = (
+            model_repository
+            or
+            # TODO: I don't have this one
+            ModelRepository(
+                providers = [
+                    # HugginFaceModelProvider
+                    # LocalModelProvider
+                ]
+            )
+        )
+
         self.cache = (
             cache or
+            # TODO: I don't have memory cache
             MemoryCache()
         )
 
@@ -73,6 +87,7 @@ class Engine:
         self
     ) -> ExecutionContext:
         return ExecutionContext(
+            model_repository = self.model_repository,
             cache = self.cache,
             resource_manager = self.resource_manager
         )

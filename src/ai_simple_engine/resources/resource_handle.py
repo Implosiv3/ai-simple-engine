@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 
-@dataclass(frozen = True, slots = True)
+@dataclass(frozen = True)
 class ResourceHandle:
     
-    id: UUID
+    key: str

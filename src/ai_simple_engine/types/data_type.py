@@ -1,5 +1,5 @@
 from ai_simple_engine.resources.resource_handle import ResourceHandle
-from dataclasses import dataclass
+from pathlib import Path
 from typing import Union, TypeVar, Generic
 
 
@@ -100,6 +100,12 @@ AUDIO = DataType(
     python_type = 'np.ndarray', # np.ndarray, but i don't want import
     parent = None # TODO: TENSOR maybe (?)
 )
+# TODO: Review this type because I'm not sure
+PATH = DataType(
+    name = 'Path',
+    python_type = Path,
+    parent = None
+)
 STRING = DataType(
     name = 'String',
     python_type = str,
@@ -125,4 +131,9 @@ ANY = DataType(
     python_type = object,
     parent = None
 )
-
+# TODO: Review this:
+INSTALLED_MODEL = DataType(
+    name = 'installed_model',
+    python_type = ResourceHandle,
+    parent = None
+)

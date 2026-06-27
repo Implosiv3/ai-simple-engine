@@ -19,7 +19,8 @@ class LoadImage(
         )
 
     async def execute(
-        self
+        self,
+        context
     ):
         # TODO: Load the image
         image = ...

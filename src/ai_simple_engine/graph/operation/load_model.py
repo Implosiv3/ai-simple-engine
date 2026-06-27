@@ -1,27 +1,38 @@
 from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.graph.output import Output
-from ai_simple_engine.types.data_type import MODEL
+from ai_simple_engine.graph.input import Input
+from ai_simple_engine.resources.model_resource import ModelResource
+from ai_simple_engine.types.data_type import MODEL, INSTALLED_MODEL, STRING
 
 
 class LoadModel(
     Operation
 ):
-
-    path: str
-    model = Output(MODEL)
+    
+    model = Input(INSTALLED_MODEL)
+    device = Input(
+        STRING,
+        default = 'cuda'
+    )
+    resource = Output(MODEL)
 
     async def execute(
         self,
         context
     ):
-        # TODO: This has to be defined
-        def load_unet(path):
-            raise Exception('"load_unet" not defined')
-        
-        # TODO: Where do we get this from (?)
-        unet = load_unet(self.path)
-        handle = context.resources.register(unet)
+        loader = context.model_loaders.get(
+            self.model.family
+        )
+
+        handle = await context.resources.load(
+            ModelResource(
+                model = self.model,
+                loader = loader,
+                device = self.device
+            )
+
+        )
 
         return {
-            'model': handle
+            'resource': handle
         }
