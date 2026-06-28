@@ -8,7 +8,7 @@ TRunner = TypeVar('TRunner')
 TKey = TypeVar('TKey')
 
 class RunnerRegistry(
-    KeyedServiceRegistry[TRunner],
+    KeyedServiceRegistry[TKey, TRunner],
     Generic[TModel, TRunner, TKey],
     ABC
 ):

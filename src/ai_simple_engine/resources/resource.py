@@ -1,8 +1,12 @@
 from ai_simple_engine.resources.resource_key import ResourceKey
 from abc import ABC, abstractmethod
+from typing import Generic, TypeVar
 
+
+T = TypeVar('T')
 
 class Resource(
+    Generic[T],
     ABC
 ):
     """

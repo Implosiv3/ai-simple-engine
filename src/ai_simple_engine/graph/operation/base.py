@@ -22,7 +22,7 @@ class Operation(
         
         unknown = set(kwargs) - self.inputs().keys()
         if unknown:
-            raise TypeError(f'Unknown inputs: {', '.join(unknown)}')
+            raise TypeError(f'Unknown inputs: {", ".join(unknown)}')
 
         for name, port in self.inputs().items():
             if name in kwargs:
@@ -51,8 +51,6 @@ class Operation(
                 cls._inputs[value.name] = value
             elif isinstance(value, Output):
                 cls._outputs[value.name] = value
-            else:
-                raise Exception('The operation parameter provided is not an "Input" nor "Output" instance.')
 
     def __hash__(
         self

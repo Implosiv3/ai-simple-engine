@@ -61,7 +61,7 @@ class Engine:
 
     async def execute(
         self,
-        targets: Union[Operation, PortReference, Iterable[Operation, PortReference]]
+        targets: Union[Operation, PortReference, Iterable[Union[Operation, PortReference]]]
     ):
         context = self.create_context()
 

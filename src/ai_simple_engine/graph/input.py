@@ -1,5 +1,5 @@
 from ai_simple_engine.types.data_type import DataType
-from ai_simple_engine.types.validator.abstract import DataTypeValidator
+# from ai_simple_engine.types.validator.abstract import DataTypeValidator
 from ai_simple_engine.types.validator.exceptions import ValidationError
 from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.graph.port import Port
@@ -24,11 +24,11 @@ class Input(
         *,
         default = MISSING,
         is_optional: bool = False,
-        validators: Union[list[DataTypeValidator], None] = None,
+        validators: Union[list['DataTypeValidator'], None] = None,
         description: Union[str, None] = None
     ):
         super().__init__(
-            type = type,
+            data_type = type,
             description = description
         )
 

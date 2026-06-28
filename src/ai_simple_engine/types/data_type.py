@@ -137,7 +137,7 @@ AUDIO = DataType(
 )
 DEVICE = DataType(
     name = 'Device',
-    python_type = Device,
+    runtime_type = Device,
     parent = None
 )
 

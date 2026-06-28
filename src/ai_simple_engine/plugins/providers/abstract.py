@@ -1,4 +1,4 @@
-from ai_simple_engine.engine_builder import EngineBuilder
+# from ai_simple_engine.engine_builder import EngineBuilder
 from abc import ABC, abstractmethod
 
 
@@ -9,7 +9,7 @@ class PluginProvider(
     @abstractmethod
     def register(
         self,
-        builder: EngineBuilder
+        builder: 'EngineBuilder'
     ) -> None:
         ...
         # builder.add_...
