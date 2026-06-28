@@ -1,12 +1,13 @@
 from ai_simple_engine.resources.resource import Resource
 from ai_simple_engine.models.installed_model import InstalledModel
+from ai_simple_engine.models.loaded_model import LoadedModel
 from ai_simple_engine.device.base import Device
 from ai_simple_engine.models.loaders.abstract import ModelLoader
 from ai_simple_engine.resources.resource_key import ResourceKey
 
 
 class ModelResource(
-    Resource
+    Resource[LoadedModel]
 ):
     
     @property
@@ -31,7 +32,7 @@ class ModelResource(
 
     async def load(
         self
-    ):
+    ) -> LoadedModel:
         return await self._loader.load(
             self._model,
             device = self._device
@@ -40,5 +41,5 @@ class ModelResource(
     async def unload(
         self,
         instance
-    ):
+    ) -> None:
         await self._loader.unload(instance)

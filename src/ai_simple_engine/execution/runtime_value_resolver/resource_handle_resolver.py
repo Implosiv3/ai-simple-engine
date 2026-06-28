@@ -16,9 +16,9 @@ class ResourceHandleRuntimeValueResolver(
             ResourceHandle
         )
 
-    def resolve(
+    async def resolve(
         self,
         value: ResourceHandle,
         context: ExecutionContext
     ):
-        return context.resources.get(value)
+        return await context.resources.get(value)

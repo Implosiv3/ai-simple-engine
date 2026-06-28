@@ -196,7 +196,6 @@ async def execute(
     for target in targets:
         if isinstance(target, Operation):
             results.append(None)
-
         else:
             results.append(
                 context.output(

@@ -4,7 +4,7 @@ from ai_simple_engine.plugins.plugin_component import PluginComponent
 from abc import ABC, abstractmethod
 
 
-class ModelProvider(
+class ModelBackend(
     PluginComponent,
     ABC
 ):
@@ -14,6 +14,17 @@ class ModelProvider(
     def name(
         self
     ) -> str:
+        ...
+
+    @property
+    @abstractmethod
+    def provider(
+        self
+    ) -> str:
+        """
+        Unique provider identifier (e.g. 'huggingface',
+        'local', 's3').
+        """
         ...
 
     @abstractmethod

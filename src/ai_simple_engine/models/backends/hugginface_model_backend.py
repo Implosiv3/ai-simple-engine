@@ -1,10 +1,10 @@
-from ai_simple_engine.models.providers.abstract import ModelProvider
+from ai_simple_engine.models.backends.abstract import ModelBackend
 from ai_simple_engine.models.model_spec import ModelSpec
 from ai_simple_engine.models.installed_model import InstalledModel
 
 
-class HuggingFaceModelProvider(
-    ModelProvider
+class HuggingFaceModelBackend(
+    ModelBackend
 ):
 
     @property

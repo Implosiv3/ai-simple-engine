@@ -20,11 +20,11 @@ class AcquireModel(
         self,
         context
     ):
-        loader = context.model_loaders.get(self.installed_model.family)
+        loader = context.model_loaders.resolve(self.model)
 
         handle = await context.resources.register(
             ModelResource(
-                model = self.installed_model,
+                model = self.model,
                 loader = loader,
                 device = self.device
             )

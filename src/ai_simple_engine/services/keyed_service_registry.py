@@ -1,21 +1,22 @@
 from typing import Generic, TypeVar
 
 
-T = TypeVar('T')
+TKey = TypeVar('TKey')
+TService = TypeVar('TService')
 
 class KeyedServiceRegistry(
-    Generic[T]
+    Generic[TKey, TService]
 ):
 
     def __init__(
         self
     ):
-        self._services: dict[str, T] = {}
+        self._services: dict[TKey, TService] = {}
 
     def register(
         self,
-        key: str,
-        service: T
+        key: TKey,
+        service: TService
     ) -> None:
         if key in self._services:
             raise ValueError(
@@ -27,7 +28,7 @@ class KeyedServiceRegistry(
     def get(
         self,
         key: str
-    ) -> T:
+    ) -> TService:
         try:
             return self._services[key]
 
@@ -38,11 +39,11 @@ class KeyedServiceRegistry(
 
     def has(
         self,
-        key: str
+        key: TKey
     ) -> bool:
         return key in self._services
 
     def values(
         self,
-    ) -> list[T]:
+    ) -> list[TService]:
         return list(self._services.values())

@@ -4,6 +4,7 @@ from ai_simple_engine.engine import Engine
 from ai_simple_engine.graph.graph_builder import GraphBuilder
 from ai_simple_engine.cache.memory_cache import MemoryCache
 from ai_simple_engine.resources.resources_manager import ResourceManager
+from ai_simple_engine.models.backends.model_backend_registry import ModelBackendRegistry
 from ai_simple_engine.execution.operation_runner.local_operation_runner import LocalOperationRunner
 from ai_simple_engine.models.model_repository import ModelRepository
 from ai_simple_engine.models.loaders.model_loader_registry import ModelLoaderRegistry
@@ -17,7 +18,7 @@ from ai_simple_engine.plugins.providers.runtime_value_resolver_provider import R
 from ai_simple_engine.plugins.providers.data_type_provider import DataTypeProvider
 from ai_simple_engine.types.data_type import DataType
 from ai_simple_engine.execution.runtime_value_resolver.abstract import RuntimeValueResolver
-from ai_simple_engine.models.providers.abstract import ModelProvider
+from ai_simple_engine.models.backends.abstract import ModelBackend
 from ai_simple_engine.types.validator.abstract import DataTypeValidator
 from ai_simple_engine.settings.engine_settings import EngineSettings
 from ai_simple_engine.plugins.plugin_context import PluginContext
@@ -36,10 +37,9 @@ class EngineBuilder:
         self._cache = MemoryCache()
         self._resource_manager = ResourceManager()
         self._operation_runner = LocalOperationRunner()
-        self._model_repository = ModelRepository()
 
         self._model_loaders = []
-        self._model_providers = []
+        self._model_backends = []
         self._runtime_value_resolvers = []
         self._operations = []
         self._data_types = []
@@ -96,14 +96,14 @@ class EngineBuilder:
 
         return self
     
-    def add_model_provider(
+    def add_model_backend(
         self,
-        model_provider: ModelProvider
+        model_backend: ModelBackend
     ) -> 'EngineBuilder':
         self._ensure_not_built()
 
         # TODO: What about repeated ones (?)
-        self._model_providers.append(model_provider)
+        self._model_backends.append(model_backend)
 
         return self
     
@@ -142,7 +142,7 @@ class EngineBuilder:
         #     )
 
         # if isinstance(provider, ModelRepositoryProvider):
-        #     self._model_providers.extend(
+        #     self._model_backends.extend(
         #         provider.model_providers()
         #     )
 
@@ -206,13 +206,30 @@ class EngineBuilder:
             services = self._services
         )
 
+
+
+        registry = ModelBackendRegistry()
+
+        for backend in self._model_backends:
+            registry.register(
+                backend.provider,
+                backend
+            )
+
+        model_repository = ModelRepository(
+            registry
+        )
+
+
+
+
         model_loader_registry = ModelLoaderRegistry()
 
         for model_loader in self._model_loaders:
             model_loader_registry.register(model_loader)
 
         # Set the plugin context
-        for provider in self._model_providers:
+        for provider in self._model_backends:
             provider.configure(plugin_context)
 
         # for model_loader in self._model_loaders:
@@ -225,7 +242,7 @@ class EngineBuilder:
 
         return Engine(
             settings = self._settings,
-            model_repository = self._model_repository,
+            model_repository = model_repository,
             cache = self._cache,
             resource_manager = self._resource_manager,
             operation_runner = self._operation_runner,
