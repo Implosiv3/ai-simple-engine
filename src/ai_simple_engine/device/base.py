@@ -42,3 +42,10 @@ class Device:
         self
     ) -> str:
         return f'Device({self.identifier!r})'
+    
+
+CPU = Device('cpu')
+CUDA = Device('cuda')
+MPS = Device('mps')
+XPU = Device('xpu')
+DIRECTML = Device('directml')
