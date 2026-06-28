@@ -11,13 +11,6 @@ class ModelBackend(
 
     @property
     @abstractmethod
-    def name(
-        self
-    ) -> str:
-        ...
-
-    @property
-    @abstractmethod
     def provider(
         self
     ) -> str:
@@ -29,20 +22,6 @@ class ModelBackend(
 
     @abstractmethod
     async def install(
-        self,
-        spec: ModelSpec
-    ) -> InstalledModel:
-        ...
-
-    @abstractmethod
-    def is_installed(
-        self,
-        spec: ModelSpec
-    ) -> bool:
-        ...
-
-    @abstractmethod
-    def get_installed_model(
         self,
         spec: ModelSpec
     ) -> InstalledModel:
