@@ -1,6 +1,7 @@
 from ai_simple_engine.resources.resource_handle import ResourceHandle
 from ai_simple_engine.models.installed_model import InstalledModel
 from ai_simple_engine.models.model_spec import ModelSpec
+from ai_simple_engine.device.base import Device
 from ai_simple_engine.types.audio import Audio
 from pathlib import Path
 from typing import Union, TypeVar, Generic
@@ -101,7 +102,7 @@ BOOLEAN = DataType(
     parent = None
 )
 ANY = DataType(
-    name = 'any',
+    name = 'Any',
     runtime_type = object,
     parent = None
 )
@@ -120,18 +121,23 @@ RESOURCE = DataType(
     parent = None
 )
 INSTALLED_MODEL = DataType(
-    name = 'installed_model',
+    name = 'InstalledModel',
     runtime_type = InstalledModel,
     parent = None
 )
 MODEL_SPEC = DataType(
-    name = 'model_spec',
+    name = 'ModelSpec',
     runtime_type = ModelSpec,
     parent = None
 )
 AUDIO = DataType(
-    name = 'audio',
+    name = 'Audio',
     runtime_type = Audio,
+    parent = None
+)
+DEVICE = DataType(
+    name = 'Device',
+    python_type = Device,
     parent = None
 )
 

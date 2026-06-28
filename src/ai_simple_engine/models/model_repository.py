@@ -53,7 +53,7 @@ class ModelRepository:
         Check if the model with the given `spec` is
         installed or not.
         """
-        return self._provider(spec).installed(spec)
+        return self._provider(spec).is_installed(spec)
 
     def get_installed_model(
         self,
@@ -63,4 +63,4 @@ class ModelRepository:
         Get the model with the given `spec` as an
         `InstalledModel` instance.
         """
-        return self._provider(spec).get(spec)
+        return self._provider(spec).get_installed_model(spec)

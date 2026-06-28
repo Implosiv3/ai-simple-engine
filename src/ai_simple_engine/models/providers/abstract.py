@@ -24,14 +24,14 @@ class ModelProvider(
         ...
 
     @abstractmethod
-    def installed(
+    def is_installed(
         self,
         spec: ModelSpec
     ) -> bool:
         ...
 
     @abstractmethod
-    def get(
+    def get_installed_model(
         self,
         spec: ModelSpec
     ) -> InstalledModel:
