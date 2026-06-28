@@ -1,10 +1,11 @@
 from ai_simple_engine.graph.operation.base import Operation
+from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.resources.resources_manager import ResourceManager
 from ai_simple_engine.models.model_repository import ModelRepository
 from ai_simple_engine.models.loaders.model_loader_registry import ModelLoaderRegistry
+from ai_simple_engine.services.service_registry import ServiceRegistry
 from ai_simple_engine.cache.base import Cache
 from ai_simple_engine.settings.engine_settings import EngineSettings
-from typing import Union
 from uuid import UUID
 
 
@@ -16,7 +17,8 @@ class ExecutionContext:
         model_repository: ModelRepository,
         model_loader_registry: ModelLoaderRegistry,
         resource_manager: ResourceManager,
-        cache: Union[Cache, None] = None
+        cache: Cache,
+        service_registry: ServiceRegistry
     ):
         self.settings: EngineSettings = settings
         """
@@ -30,6 +32,8 @@ class ExecutionContext:
         self.model_loaders = model_loader_registry
         self.resources = resource_manager
         self.cache = cache
+        self.services = service_registry
+
         self._operation_outputs: dict[UUID, dict[str, object]] = {}
 
     def has_result(
@@ -59,8 +63,8 @@ class ExecutionContext:
         return self._operation_outputs[operation.id][name]
     
 
-from ai_simple_engine.graph.port_reference import PortReference
 
+# TODO: Move to a utils (?)
 def result(
     self,
     reference: PortReference
