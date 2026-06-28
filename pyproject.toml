@@ -1,6 +1,6 @@
 [project]
 name = "ai-simple-engine"
-version = "0.0.7"
+version = "0.0.8"
 description = "AI Simple Engine"
 authors = [
     {name = "danialcala94", email = "danielalcalavalera@gmail.com"}

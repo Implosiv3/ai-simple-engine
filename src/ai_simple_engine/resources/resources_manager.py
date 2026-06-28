@@ -1,7 +1,7 @@
 from ai_simple_engine.resources.resource import Resource
 from ai_simple_engine.resources.resource_handle import ResourceHandle
 from ai_simple_engine.resources.loaded_resource import LoadedResource
-from typing import Union
+from ai_simple_engine.resources.resource_key import ResourceKey
 
 
 class ResourceManager:
@@ -9,8 +9,49 @@ class ResourceManager:
     def __init__(
         self
     ):
-        self._resources: dict[str, LoadedResource] = {}
+        self._resources: dict[ResourceKey, Resource] = {}
+        self._instances: dict[ResourceKey, object]
 
+    async def register(
+        self,
+        resource: Resource
+    ) -> ResourceHandle:
+        key = resource.key
+
+        self._resources[key] = resource
+
+        return ResourceHandle(key)
+    
+    async def resolve(
+        self,
+        handle: ResourceHandle
+    ):
+        key = handle.key
+
+        if key not in self._instances:
+            resource = self._resources[key]
+            self._instances[key] = await resource.load()
+
+        return self._instances[key]
+    
+    async def release(
+        self,
+        handle: ResourceHandle
+    ):
+        key = handle.key
+
+        instance = self._instances.pop(key, None)
+
+        if instance is None:
+            return
+
+        resource = self._resources[key]
+
+        await resource.unload(instance)
+
+    """
+    TODO: What about all this below (?)
+    """
     async def load(
         self,
         resource: Resource
