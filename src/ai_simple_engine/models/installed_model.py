@@ -23,7 +23,7 @@ class InstalledModel:
     @property
     def provider(
         self
-    ) -> ModelFamily:
+    ) -> str:
         """
         Get the `provider` of the specifications `spec`.
         """
