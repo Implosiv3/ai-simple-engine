@@ -1,8 +1,10 @@
 from ai_simple_engine.graph.input import Input
+from ai_simple_engine.plugins.plugin_component import PluginComponent
 from abc import ABC, abstractmethod
 
 
 class DataTypeValidator(
+    PluginComponent,
     ABC
 ):
     """

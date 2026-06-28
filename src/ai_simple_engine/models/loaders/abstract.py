@@ -1,16 +1,18 @@
 from ai_simple_engine.models.installed_model import InstalledModel
+from ai_simple_engine.plugins.plugin_component import PluginComponent
+from ai_simple_engine.models.loaded_model import LoadedModel
 from abc import ABC, abstractmethod
 
 
-
 class ModelLoader(
+    PluginComponent,
     ABC
 ):
 
-    @property
     @abstractmethod
-    def family(
-        self
+    def is_supported(
+        self,
+        family: str
     ) -> str:
         ...
 
@@ -20,11 +22,11 @@ class ModelLoader(
         model: InstalledModel,
         *,
         device: str
-    ) -> object:
+    ) -> LoadedModel:
         ...
 
     async def unload(
         self,
-        instance: object
+        instance: LoadedModel
     ):
         pass

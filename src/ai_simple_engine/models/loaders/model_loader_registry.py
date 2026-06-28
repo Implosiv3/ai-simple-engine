@@ -8,13 +8,14 @@ class ModelLoaderRegistry:
         self,
         loaders: Iterable[ModelLoader]
     ):
-        self._loaders = {
-            loader.family: loader
-            for loader in loaders
-        }
+        self._loaders = loaders
 
     def get(
         self,
         family: str
     ) -> ModelLoader:
-        return self._loaders[family]
+        for loader in self._loaders:
+            if loader.is_supported(family):
+                return loader
+
+        raise ValueError(f'The family "{family}" is not supported by these loaders.')

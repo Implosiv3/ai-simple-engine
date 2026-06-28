@@ -12,6 +12,7 @@ from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.resources.resources_manager import ResourceManager
 from ai_simple_engine.models.model_repository import ModelRepository
+from ai_simple_engine.settings.engine_settings import EngineSettings
 from typing import Union, Iterable
 
 
@@ -25,12 +26,15 @@ class Engine:
     def __init__(
         self,
         *,
+        settings: EngineSettings,
         model_repository: Union[ModelRepository, None] = None,
         cache: Union[Cache, None] = None,
         resource_manager: Union[ResourceManager, None] = None,
         operation_runner: Union[OperationRunner, None] = None,
         runtime_value_resolvers: Union[Iterable[RuntimeValueResolver], None] = None,
     ):
+        self.settings: EngineSettings = settings
+
         self.model_repository = (
             model_repository
             or

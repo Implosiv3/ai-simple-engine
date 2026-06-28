@@ -1,8 +1,8 @@
 from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.resources.resources_manager import ResourceManager
 from ai_simple_engine.models.model_repository import ModelRepository
-from ai_simple_engine.models.hugginface import HugginFaceModelRepository
 from ai_simple_engine.cache.base import Cache
+from ai_simple_engine.settings.engine_settings import EngineSettings
 from typing import Union
 from uuid import UUID
 
@@ -11,15 +11,22 @@ class ExecutionContext:
 
     def __init__(
         self,
+        settings: EngineSettings,
         model_repository: Union[ModelRepository, None] = None,
         resource_manager: Union[ResourceManager, None] = None,
         cache: Union[Cache, None] = None
     ):
+        self.settings: EngineSettings = settings
+        """
+        All the internal settings of the engine.
+        """
+
         self.model_repository (
             model_repository
             if model_repository is not None else
             # TODO: We don't have this yet
-            HugginFaceModelRepository(hf_token = 'invented')
+            # HugginFaceModelRepository(hf_token = 'invented')
+            None
         )
         self.resources = (
             resource_manager

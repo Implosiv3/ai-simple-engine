@@ -19,6 +19,9 @@ from ai_simple_engine.types.data_type import DataType
 from ai_simple_engine.execution.runtime_value_resolver.abstract import RuntimeValueResolver
 from ai_simple_engine.models.providers.abstract import ModelProvider
 from ai_simple_engine.types.validator.abstract import DataTypeValidator
+from ai_simple_engine.settings.engine_settings import EngineSettings
+from ai_simple_engine.plugins.plugin_context import PluginContext
+from ai_simple_engine.services.service_registry import ServiceRegistry, T
 
 
 class EngineBuilder:
@@ -26,6 +29,9 @@ class EngineBuilder:
     def __init__(
         self
     ):
+        self._settings = EngineSettings()
+        self._services = ServiceRegistry()
+
         self._graph_builder = GraphBuilder()
         self._cache = MemoryCache()
         self._resource_manager = ResourceManager()
@@ -157,10 +163,58 @@ class EngineBuilder:
 
         # TODO: What about the validators (?)
 
+    def add_service(
+        self,
+        service_type: type[T],
+        service: T
+    ) -> 'EngineBuilder':
+        """
+        The `service_type` is to identify it in a unique
+        way so we can get it later, but letting us to
+        obtain a custom class if we want to. Here you
+        have one example:
+
+        ```
+        class HttpClient(ABC):
+            ...
+
+        class RequestsHttpClient(HttpClient):
+            ...
+
+        builder.add_service(
+            HttpClient,
+            RequestsHttpClient()
+        )
+        ```
+        """
+        self._ensure_not_built()
+
+        self._services.register(
+            service_type,
+            service
+        )
+
+        return self
+
     def build(
         self
     ) -> Engine:
         self._ensure_not_built()
+
+        plugin_context = PluginContext(
+            settings = self._settings,
+            services = self._services
+        )
+
+        # Set the plugin context
+        for provider in self._model_providers:
+            provider.configure(plugin_context)
+
+        for model_loader in self._model_loaders:
+            model_loader.configure(plugin_context)
+
+        for runtime_value_resolver in self._runtime_value_resolvers:
+            runtime_value_resolver.configure(plugin_context)
 
         self._was_built = True
 

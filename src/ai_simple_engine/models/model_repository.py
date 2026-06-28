@@ -1,6 +1,7 @@
 from ai_simple_engine.models.installed_model import InstalledModel
 from ai_simple_engine.models.providers.abstract import ModelProvider
 from ai_simple_engine.models.model_spec import ModelSpec
+from ai_simple_engine.settings.engine_settings import EngineSettings
 from typing import Iterable
 
 
@@ -8,12 +9,15 @@ class ModelRepository:
     
     def __init__(
         self,
-        providers: Iterable[ModelProvider]
+        providers: Iterable[ModelProvider],
+        settings: EngineSettings
     ):
         self._providers = {
             provider.name: provider
             for provider in providers
         }
+
+        self._settings: EngineSettings = settings
 
     def _provider(
         self,
@@ -24,6 +28,12 @@ class ModelRepository:
 
         except KeyError:
             raise ValueError(f'Unknown model provider "{spec.provider}".')
+        
+    def configure(
+        self,
+        settings: EngineSettings
+    ) -> None:
+        self._settings = settings
 
     async def install(
         self,
