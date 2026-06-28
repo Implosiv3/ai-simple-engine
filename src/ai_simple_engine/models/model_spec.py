@@ -1,3 +1,4 @@
+from ai_simple_engine.models.model_family import ModelFamily
 from dataclasses import dataclass
 from typing import Union, Dict, Optional, Callable
 from pathlib import Path
@@ -7,10 +8,15 @@ from pathlib import Path
 class ModelSpec:
     """
     A model specification to indicate the model we
-    want to obtain and from which source.
+    want to obtain and from which source, including
+    the next fields:
+    - `family`
+    - `provider`
+    - `identifier`
+    - `revision`
     """
 
-    family: str
+    family: ModelFamily
     provider: str
     """
     Hugginface, a local path, an url. The source of

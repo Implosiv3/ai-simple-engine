@@ -20,9 +20,7 @@ class LoadModel(
         self,
         context
     ):
-        loader = context.model_loaders.get(
-            self.model.family
-        )
+        loader = context.model_loaders.get(self.model.family)
 
         handle = await context.resources.load(
             ModelResource(

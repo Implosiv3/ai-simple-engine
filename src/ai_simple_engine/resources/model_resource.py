@@ -15,9 +15,7 @@ class ModelResource(
     ):
         return ResourceKey(
             category = 'model',
-            # identifier = self._model.id,
-            # TODO: This is not a ModelSpec but an InstalledModel
-            identifier = f'{self.model.provider}:{self.model.family}:{self.model.identifier}',
+            identifier = f'{self._model.provider}:{self._model.family}:{self._model.identifier}',
             device = str(self._device)
         )
 

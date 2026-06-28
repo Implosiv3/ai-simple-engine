@@ -15,7 +15,7 @@ class Device:
         self
     ) -> str:
         """
-        Returns the device family ('cpu', 'cuda', 'mps'...).
+        Returns the device type ('cpu', 'cuda', 'mps'...).
         """
         return self.identifier.split(':')[0]
 

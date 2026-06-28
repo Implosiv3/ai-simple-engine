@@ -20,9 +20,7 @@ class AcquireModel(
         self,
         context
     ):
-        loader = context.model_loaders.get(
-            self.installed_model.family
-        )
+        loader = context.model_loaders.get(self.installed_model.family)
 
         handle = await context.resources.register(
             ModelResource(

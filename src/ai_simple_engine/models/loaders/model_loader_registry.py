@@ -1,5 +1,5 @@
 from ai_simple_engine.models.loaders.abstract import ModelLoader
-from typing import Iterable
+from ai_simple_engine.models.model_family import ModelFamily
 
 
 class ModelLoaderRegistry:
@@ -17,7 +17,7 @@ class ModelLoaderRegistry:
 
     def get(
         self,
-        family: str
+        family: ModelFamily
     ) -> ModelLoader:
         for loader in self._loaders:
             if loader.is_supported(family):
