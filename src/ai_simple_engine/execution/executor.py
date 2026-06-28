@@ -168,8 +168,8 @@ class Executor:
             value = outputs[name]
 
             if (
-                port.type.python_type is not object and
-                not isinstance(value, port.type.python_type)
+                port.type.runtime_type is not object and
+                not isinstance(value, port.type.runtime_type)
             ):
                 # TODO: Maybe say what was expected (?)
                 raise ExecutionError(f'The output "{name}" type is not the expected one.')

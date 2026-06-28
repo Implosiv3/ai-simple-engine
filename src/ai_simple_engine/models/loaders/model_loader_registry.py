@@ -5,10 +5,15 @@ from typing import Iterable
 class ModelLoaderRegistry:
 
     def __init__(
-        self,
-        loaders: Iterable[ModelLoader]
+        self
     ):
-        self._loaders = loaders
+        self._loaders: list[ModelLoader] = []
+
+    def register(
+        self,
+        loader: ModelLoader
+    ) -> None:
+        self._loaders.append(loader)
 
     def get(
         self,

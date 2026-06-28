@@ -1,14 +1,14 @@
 from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.graph.input import Input
 from ai_simple_engine.graph.output import Output
-from ai_simple_engine.types.data_type import MODEL, IMAGE
+from ai_simple_engine.types.data_type import RESOURCE, IMAGE
 
 
 class RunModel(
     Operation
 ):
 
-    model = Input(MODEL, name = 'model')
+    model = Input(RESOURCE, name = 'model')
     image = Input(IMAGE, name = 'image')
     result = Output(IMAGE)
 

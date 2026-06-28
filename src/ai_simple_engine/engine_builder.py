@@ -206,12 +206,17 @@ class EngineBuilder:
             services = self._services
         )
 
+        model_loader_registry = ModelLoaderRegistry()
+
+        for model_loader in self._model_loaders:
+            model_loader_registry.register(model_loader)
+
         # Set the plugin context
         for provider in self._model_providers:
             provider.configure(plugin_context)
 
-        for model_loader in self._model_loaders:
-            model_loader.configure(plugin_context)
+        # for model_loader in self._model_loaders:
+        #     model_loader.configure(plugin_context)
 
         for runtime_value_resolver in self._runtime_value_resolvers:
             runtime_value_resolver.configure(plugin_context)
@@ -219,6 +224,7 @@ class EngineBuilder:
         self._was_built = True
 
         return Engine(
+            settings = self._settings,
             model_repository = self._model_repository,
             cache = self._cache,
             resource_manager = self._resource_manager,
@@ -226,9 +232,7 @@ class EngineBuilder:
             runtime_value_resolvers = self._runtime_value_resolvers,
 
             graph_builder = self._graph_builder,
-            model_loader_registry = ModelLoaderRegistry(
-                self._model_loaders
-            )
+            model_loader_registry = model_loader_registry
         )
 
     def _ensure_not_built(

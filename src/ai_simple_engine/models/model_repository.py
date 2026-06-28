@@ -55,7 +55,7 @@ class ModelRepository:
         """
         return self._provider(spec).installed(spec)
 
-    def get(
+    def get_installed_model(
         self,
         spec: ModelSpec
     ) -> InstalledModel:

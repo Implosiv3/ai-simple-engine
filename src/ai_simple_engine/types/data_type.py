@@ -1,4 +1,7 @@
 from ai_simple_engine.resources.resource_handle import ResourceHandle
+from ai_simple_engine.models.installed_model import InstalledModel
+from ai_simple_engine.models.model_spec import ModelSpec
+from ai_simple_engine.types.audio import Audio
 from pathlib import Path
 from typing import Union, TypeVar, Generic
 
@@ -10,11 +13,11 @@ class DataType(
 ):
     """
     Our engine's data type class, that defines some
-    conditions but also the `python_type` that is
+    conditions but also the `runtime_type` that is
     expected.
     """
     
-    python_type: type[T]
+    runtime_type: type[T]
     """
     The python type of this data type. This can be
     used to validate it.
@@ -23,11 +26,11 @@ class DataType(
     def __init__(
         self,
         name: str,
-        python_type: type[T],
+        runtime_type: type[T],
         parent: Union['DataType', None] = None
     ):
         self.name = name
-        self.python_type = python_type
+        self.runtime_type = runtime_type
         self.parent = parent
 
     def is_assignable_from(
@@ -48,15 +51,15 @@ class DataType(
         self,
         value: object
     ) -> None:
-        if not isinstance(value, self.python_type):
-            raise TypeError(f'Expected "{self.python_type.__name__}", got "{type(value).__name__}".')
+        if not isinstance(value, self.runtime_type):
+            raise TypeError(f'Expected "{self.runtime_type.__name__}", got "{type(value).__name__}".')
         
     def schema(
         self
     ) -> dict:
         return {
             'name': self.name,
-            'python_type': self.python_type.__name__
+            'runtime_type': self.runtime_type.__name__
         }
     
     def __str__(
@@ -75,65 +78,69 @@ class DataType(
 """
     -- Specific types below --
 """
-TENSOR = DataType(
-    name = 'Tensor',
-    python_type = 'torch.Tensor', # torch.Tensor, but I don't want import
-    parent = None
-)
-IMAGE = DataType(
-    name = 'Image',
-    python_type = 'PIL.Image.Image', # PIL.Image.Image, but I don't want import
-    parent = TENSOR
-)
-LATENT = DataType(
-    name = 'Latent',
-    python_type = 'torch.Tensor', # torch.Tensor, but I don't want import
-    parent = TENSOR
-)
-MODEL = DataType(
-    name = 'Model',
-    python_type = ResourceHandle,
-    parent = None
-)
-AUDIO = DataType(
-    name = 'Audio',
-    python_type = 'np.ndarray', # np.ndarray, but i don't want import
-    parent = None # TODO: TENSOR maybe (?)
-)
-# TODO: Review this type because I'm not sure
-PATH = DataType(
-    name = 'Path',
-    python_type = Path,
-    parent = None
-)
+
+# Basic types
 STRING = DataType(
     name = 'String',
-    python_type = str,
+    runtime_type = str,
     parent = None
 )
 FLOAT = DataType(
     name = 'Float',
-    python_type = float,
+    runtime_type = float,
     parent = None
 )
 INT = DataType(
     name = 'Int',
-    python_type = int,
+    runtime_type = int,
     parent = None
 )
 BOOLEAN = DataType(
     name = 'Boolean',
-    python_type = bool,
+    runtime_type = bool,
     parent = None
 )
 ANY = DataType(
     name = 'any',
-    python_type = object,
+    runtime_type = object,
     parent = None
 )
-# TODO: Review this:
+
+# Almost basic types
+PATH = DataType(
+    name = 'Path',
+    runtime_type = Path,
+    parent = None
+)
+
+# Specific types
+RESOURCE = DataType(
+    name = 'Resource',
+    runtime_type = ResourceHandle,
+    parent = None
+)
 INSTALLED_MODEL = DataType(
     name = 'installed_model',
-    python_type = ResourceHandle,
+    runtime_type = InstalledModel,
     parent = None
 )
+MODEL_SPEC = DataType(
+    name = 'model_spec',
+    runtime_type = ModelSpec,
+    parent = None
+)
+AUDIO = DataType(
+    name = 'audio',
+    runtime_type = Audio,
+    parent = None
+)
+
+
+# TODO: Move to the specific dependency (library)
+IMAGE = DataType(
+    name = 'Image',
+    runtime_type = 'PIL.Image.Image', # PIL.Image.Image, but I don't want import
+    parent = None
+)
+
+
