@@ -24,6 +24,9 @@ class ExecutionContext:
         """
 
         self.models = model_repository
+        """
+        Access to the model repository.
+        """
         self.model_loaders = model_loader_registry
         self.resources = resource_manager
         self.cache = cache

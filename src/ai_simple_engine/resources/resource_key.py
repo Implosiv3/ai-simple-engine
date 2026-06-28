@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Union
 
 
+# TODO: Refactor the use of it
 @dataclass(frozen = True)
 class ResourceKey:
     """
@@ -10,6 +11,6 @@ class ResourceKey:
     the same resource twice if we already have it.
     """
 
-    type: str
+    category: str  # 'type' before
     identifier: str
-    device: Union[str, None] = None
+    variant: Union[str, None] = None  # 'device' before

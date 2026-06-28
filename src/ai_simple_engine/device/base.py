@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Union
 
 
 @dataclass(frozen = True)
@@ -8,6 +9,29 @@ class Device:
     """
 
     identifier: str
+
+    @property
+    def type(
+        self
+    ) -> str:
+        """
+        Returns the device family ('cpu', 'cuda', 'mps'...).
+        """
+        return self.identifier.split(':')[0]
+
+    @property
+    def index(
+        self
+    ) -> Union[int, None]:
+        """
+        Returns the device index if present.
+        """
+        parts = self.identifier.split(':', 1)
+
+        if len(parts) == 1:
+            return None
+
+        return int(parts[1])
 
     def __str__(
         self
