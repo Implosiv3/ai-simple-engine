@@ -10,13 +10,19 @@ class ModelLoader(
     PluginComponent,
     ABC
 ):
-
+    
+    @property
     @abstractmethod
+    def family(
+        self
+    ) -> ModelFamily:
+        ...
+
     def is_supported(
         self,
         family: ModelFamily
     ) -> str:
-        ...
+        return str(self.family) == str(family)
 
     @abstractmethod
     async def load(

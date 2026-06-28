@@ -115,20 +115,24 @@ class EngineBuilder:
     def add_plugin(
         self,
         plugin: Plugin
-    ):
+    ) -> 'EngineBuilder':
         self._ensure_not_built()
 
         for provider in plugin.providers():
             self.add_provider(provider)
 
+        return self
+
     def add_provider(
         self,
         provider: PluginProvider
-    ):
+    ) -> 'EngineBuilder':
         self._ensure_not_built()
 
         # The provider is now active
         provider.register(self)
+
+        return self
 
         # if isinstance(provider, ModelLoaderProvider):
         #     self._model_loaders.extend(
@@ -195,42 +199,29 @@ class EngineBuilder:
     ) -> Engine:
         self._ensure_not_built()
 
+        backend_registry = self._build_model_backend_registry()
+        model_loader_registry = self._build_model_loader_registry()
+
+        self._services.register(
+            ModelBackendRegistry,
+            backend_registry
+        )
+
+        self._services.register(
+            ModelLoaderRegistry,
+            model_loader_registry
+        )
+
         plugin_context = PluginContext(
             settings = self._settings,
             services = self._services
         )
 
-
-
-        registry = ModelBackendRegistry()
-
-        for backend in self._model_backends:
-            registry.register(
-                backend.provider,
-                backend
-            )
+        self._configure_components(plugin_context)
 
         model_repository = ModelRepository(
-            registry
+            backend_registry
         )
-
-
-
-
-        model_loader_registry = ModelLoaderRegistry()
-
-        for model_loader in self._model_loaders:
-            model_loader_registry.register(model_loader)
-
-        # Set the plugin context
-        for provider in self._model_backends:
-            provider.configure(plugin_context)
-
-        # for model_loader in self._model_loaders:
-        #     model_loader.configure(plugin_context)
-
-        for runtime_value_resolver in self._runtime_value_resolvers:
-            runtime_value_resolver.configure(plugin_context)
 
         self._was_built = True
 
@@ -245,6 +236,55 @@ class EngineBuilder:
             graph_builder = self._graph_builder,
             model_loader_registry = model_loader_registry
         )
+    
+    def _configure_components(
+        self,
+        plugin_context: PluginContext
+    ) -> None:
+        """
+        *For internal use only*
+        """
+        components = [
+            *self._model_backends,
+            *self._model_loaders,
+            *self._runtime_value_resolvers,
+            *self._data_type_validators,
+        ]
+
+        for component in components:
+            component.configure(plugin_context)
+    
+    def _build_model_backend_registry(
+        self
+    ) -> ModelBackendRegistry:
+        """
+        *For internal use only*
+        """
+        registry = ModelBackendRegistry()
+
+        for backend in self._model_backends:
+            registry.register(
+                backend.provider,
+                backend
+            )
+
+        return registry
+    
+    def _build_model_loader_registry(
+        self
+    ) -> ModelLoaderRegistry:
+        """
+        *For internal use only*
+        """
+        model_loader_registry = ModelLoaderRegistry()
+
+        for model_loader in self._model_loaders:
+            model_loader_registry.register(
+                model_loader.family,
+                model_loader
+            )
+
+        return model_loader_registry
 
     def _ensure_not_built(
         self
