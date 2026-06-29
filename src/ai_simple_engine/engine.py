@@ -3,6 +3,7 @@ from ai_simple_engine.execution.executor import Executor
 from ai_simple_engine.execution.operation_runner.abstract import OperationRunner
 from ai_simple_engine.execution.runtime_value_resolver.abstract import RuntimeValueResolver
 from ai_simple_engine.execution.execution_context import ExecutionContext
+from ai_simple_engine.services.service_registry import ServiceRegistry
 from ai_simple_engine.execution.runtime_value_resolver.port_reference_resolver import PortReferenceRuntimeValueResolver
 from ai_simple_engine.execution.runtime_value_resolver.resource_handle_resolver import ResourceHandleRuntimeValueResolver
 from ai_simple_engine.models.loaders.model_loader_registry import ModelLoaderRegistry
@@ -26,52 +27,95 @@ class Engine:
         self,
         *,
         settings: EngineSettings,
-        model_repository: ModelRepository,
-        cache: Cache,
-        resource_manager: ResourceManager,
-        operation_runner: OperationRunner,
-        runtime_value_resolvers: Union[Iterable[RuntimeValueResolver], None] = None,
         graph_builder: GraphBuilder,
-        model_loader_registry: ModelLoaderRegistry
+        executor: Executor,
+        model_repository: ModelRepository,
+        model_loader_registry: ModelLoaderRegistry,
+        resource_manager: ResourceManager,
+        cache: Cache,
+        runtime_value_resolvers: Union[Iterable[RuntimeValueResolver], None] = None,
+        services: ServiceRegistry,
     ):
-        self.settings: EngineSettings = settings
-        self.model_repository = model_repository
-        self.cache = cache
-        self.resource_manager = resource_manager
-        self.operation_runner = operation_runner
-
-        self.runtime_value_resolvers = [
-            PortReferenceRuntimeValueResolver(),
-            ResourceHandleRuntimeValueResolver(),
-        ]
-
-        # TODO: Does this avoid repeated values (?)
-        if runtime_value_resolvers:
-            self.runtime_value_resolvers.extend(runtime_value_resolvers)
-
+        self._settings = settings
         self._graph_builder = graph_builder
-        # TODO: Am I actually using this (?)
-        self._model_loader_registry = model_loader_registry
+        self._executor = executor
 
-        self._executor = Executor(
-            graph_builder = self._graph_builder,
-            operation_runner = self.operation_runner,
-            runtime_value_resolvers = self.runtime_value_resolvers,
+        self._model_repository = model_repository
+        self._model_loader_registry = model_loader_registry
+        self._resource_manager = resource_manager
+        self._cache = cache
+        self._runtime_value_resolvers = runtime_value_resolvers
+        self._services = services
+
+
+        # self.settings: EngineSettings = settings
+        # self.model_repository = model_repository
+        # self.cache = cache
+        # self.resource_manager = resource_manager
+        # self.operation_runner = operation_runner
+
+        # self.runtime_value_resolvers = [
+        #     PortReferenceRuntimeValueResolver(),
+        #     ResourceHandleRuntimeValueResolver(),
+        # ]
+
+        # # TODO: Does this avoid repeated values (?)
+        # if runtime_value_resolvers:
+        #     self.runtime_value_resolvers.extend(runtime_value_resolvers)
+
+        # self._graph_builder = graph_builder
+        # # TODO: Am I actually using this (?)
+        # self._model_loader_registry = model_loader_registry
+
+        # self._executor = Executor(
+        #     graph_builder = self._graph_builder,
+        #     operation_runner = self.operation_runner,
+        #     runtime_value_resolvers = self.runtime_value_resolvers,
+        # )
+
+    # async def execute(
+    #     self,
+    #     targets: Union[Operation, PortReference, Iterable[Union[Operation, PortReference]]]
+    # ):
+    #     context = self.create_context()
+
+    #     return await self._executor.run(targets, context)
+    
+    async def run(
+        self,
+        *targets: PortReference
+    ):
+        context = ExecutionContext(
+            settings = self._settings,
+            model_repository = self._model_repository,
+            resource_manager = self._resource_manager,
+            cache = self._cache,
+            services = self._services,
         )
 
-    async def execute(
-        self,
-        targets: Union[Operation, PortReference, Iterable[Union[Operation, PortReference]]]
-    ):
-        context = self.create_context()
+        await self._executor.run(
+            targets = targets,
+            context = context,
+        )
 
-        return await self._executor.run(targets, context)
+        values = [
+            context.output(
+                target.operation,
+                target.port_name,
+            )
+            for target in targets
+        ]
+
+        if len(values) == 1:
+            return values[0]
+
+        return tuple(values)
 
     def create_context(
         self
     ) -> ExecutionContext:
         return ExecutionContext(
-            model_repository = self._model_repository,
-            cache = self._cache,
-            resource_manager = self._resource_manager
+            model_repository = self.model_repository,
+            cache = self.cache,
+            resource_manager = self.resource_manager
         )

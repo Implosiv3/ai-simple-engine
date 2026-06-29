@@ -5,6 +5,8 @@ from ai_simple_engine.cache.memory_cache import MemoryCache
 from ai_simple_engine.resources.resources_manager import ResourceManager
 from ai_simple_engine.models.backends.model_backend_registry import ModelBackendRegistry
 from ai_simple_engine.execution.operation_runner.local_operation_runner import LocalOperationRunner
+from ai_simple_engine.execution.operation_runner.abstract import OperationRunner
+from ai_simple_engine.execution.executor import Executor
 from ai_simple_engine.models.model_repository import ModelRepository
 from ai_simple_engine.models.loaders.model_loader_registry import ModelLoaderRegistry
 from ai_simple_engine.models.loaders.abstract import ModelLoader
@@ -26,11 +28,10 @@ class EngineBuilder:
     ):
         self._settings = EngineSettings()
         self._services = ServiceRegistry()
-
+        self._operation_runner = LocalOperationRunner()
         self._graph_builder = GraphBuilder()
         self._cache = MemoryCache()
         self._resource_manager = ResourceManager()
-        self._operation_runner = LocalOperationRunner()
 
         self._model_loaders = []
         self._model_backends = []
@@ -40,11 +41,48 @@ class EngineBuilder:
         # TODO: What about the validators (?)
         self._data_type_validators = []
 
+        self._instantiate_executor()
+
         self._was_built:bool = False
         """
         Internal boolean flag to control when the
         builder has already built an engine.
         """
+
+    def _instantiate_executor(
+        self
+    ) -> 'EngineBuilder':
+        """
+        *For internal use only*
+
+        Create (or recreate if existing) the executor
+        instance:
+
+        ```
+        self._executor = Executor(
+            graph_builder = self._graph_builder,
+            operation_runner = self._operation_runner,
+            runtime_value_resolvers = self._runtime_value_resolvers
+        )
+        ```
+        """
+        self._executor = Executor(
+            graph_builder = self._graph_builder,
+            operation_runner = self._operation_runner,
+            runtime_value_resolvers = self._runtime_value_resolvers
+        )
+
+        return self
+
+    def set_operation_runner(
+        self,
+        operation_runner: OperationRunner
+    ) -> 'EngineBuilder':
+        self._operation_runner = operation_runner
+
+        self._instantiate_executor()
+
+        return self
 
     def add_model_loader(
         self,
@@ -227,14 +265,14 @@ class EngineBuilder:
 
         return Engine(
             settings = self._settings,
-            model_repository = model_repository,
-            cache = self._cache,
-            resource_manager = self._resource_manager,
-            operation_runner = self._operation_runner,
-            runtime_value_resolvers = self._runtime_value_resolvers,
-
             graph_builder = self._graph_builder,
-            model_loader_registry = model_loader_registry
+            executor = self._executor,
+            model_repository = model_repository,
+            model_loader_registry = model_loader_registry,
+            resource_manager = self._resource_manager,
+            cache = self._cache,
+            runtime_value_resolvers = self._runtime_value_resolvers,
+            services = self._services,
         )
     
     def _configure_components(

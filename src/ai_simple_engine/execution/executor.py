@@ -33,10 +33,10 @@ class Executor:
 
     async def run(
         self,
-        outputs: PortReference | Iterable[PortReference],
+        targets: PortReference | Iterable[PortReference],
         context: ExecutionContext
     ) -> ExecutionContext:
-        graph = self._graph_builder.build(outputs)
+        graph = self._graph_builder.build(targets)
 
         self._validator.validate(graph)
 
@@ -65,17 +65,24 @@ class Executor:
 
             return
         
-        resolved_inputs = {
-            name: self._resolve_value(value, context)
-            for name, value in operation._connections.items()
-        }
+        resolved_inputs = {}
+
+        # TODO: Use 'Input' metadata (?)
+        for input_name in operation.inputs():
+            value = getattr(operation, input_name)
+
+            resolved_inputs[input_name] = await self._resolve_value(
+                value,
+                context
+            )
         
         operation._begin_execution(resolved_inputs)
 
         try:
             outputs = await self._operation_runner.run(
-                operation,
-                context
+                operation = operation,
+                inputs = resolved_inputs,
+                context = context
             )
 
         finally:
@@ -96,24 +103,7 @@ class Executor:
             outputs
         )
 
-    def _resolve_parameters(
-        self,
-        operation: Operation,
-        context: ExecutionContext
-    ) -> dict[str, object]:
-        parameters = {}
-
-        for field in operation.model_fields:
-            value = getattr(operation, field)
-
-            parameters[field] = self._resolve_value(
-                value,
-                context
-            )
-
-        return parameters
-    
-    def _resolve_value(
+    async def _resolve_value(
         self,
         value,
         context: ExecutionContext
@@ -131,14 +121,14 @@ class Executor:
                 )
 
                 # Maybe we need to resolve more
-                return self._resolve_value(
+                return await self._resolve_value(
                     resolved,
                     context
                 )
         
         if isinstance(value, Mapping):
             return {
-                k: self._resolve_value(v, context)
+                k: await self._resolve_value(v, context)
                 for k, v in value.items()
             }
         
@@ -167,41 +157,8 @@ class Executor:
 
             value = outputs[name]
 
-            if (
-                port.type.runtime_type is not object and
-                not isinstance(value, port.type.runtime_type)
-            ):
-                # TODO: Maybe say what was expected (?)
-                raise ExecutionError(f'The output "{name}" type is not the expected one.')
-    
+            try:
+                port.type.validate(value)
 
-async def execute(
-    targets: Union[Operation, PortReference, Iterable[Union[Operation, PortReference]]]
-):
-    executor = Executor()
-
-    context = await executor.run(targets)
-
-    if isinstance(targets, Operation):
-        return None
-
-    if isinstance(targets, PortReference):
-        return context.output(
-            targets.operation,
-            targets.name
-        )
-
-    results = []
-
-    for target in targets:
-        if isinstance(target, Operation):
-            results.append(None)
-        else:
-            results.append(
-                context.output(
-                    target.operation,
-                    target.name
-                )
-            )
-
-    return results
+            except TypeError as e:
+                raise ExecutionError(f'Invalid value for output "{name}": {e}') from e

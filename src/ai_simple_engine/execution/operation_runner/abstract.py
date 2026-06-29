@@ -11,6 +11,7 @@ class OperationRunner(
     async def run(
         self,
         operation: Operation,
+        inputs: dict,
         context: ExecutionContext
     ) -> dict[str, object]:
         ...

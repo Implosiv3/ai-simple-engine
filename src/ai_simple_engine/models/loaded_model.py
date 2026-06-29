@@ -6,9 +6,14 @@ from typing import Generic, TypeVar, Union
 
 T = TypeVar('T')
 
-
 @dataclass(frozen = True)
-class LoadedModel(Generic[T]):
+class LoadedModel(
+    Generic[T]
+):
+    """
+    A loaded model class including the model that is
+    installed and the instance.
+    """
 
     installed_model: InstalledModel
     instance: T

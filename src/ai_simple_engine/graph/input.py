@@ -52,7 +52,11 @@ class Input(
 
             raise ValidationError(f'"{self.name}" cannot be None.')
 
-        self.type.validate(value)
+        # TODO: Is this ok (?)
+        # Validate if non-basic type
+        validate_function = getattr(self.type, 'validate', None)
+        if callable(validate_function):
+            self.type.validate(value)
         
         for validator in self.validators:
             validator.validate(
