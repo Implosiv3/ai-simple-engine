@@ -10,7 +10,8 @@ from ai_simple_engine.execution.executor import Executor
 from ai_simple_engine.models.model_repository import ModelRepository
 from ai_simple_engine.models.loaders.model_loader_registry import ModelLoaderRegistry
 from ai_simple_engine.models.loaders.abstract import ModelLoader
-from ai_simple_engine.plugins.providers.abstract import PluginProvider
+from ai_simple_engine.execution.runtime_value_resolver.resource_handle_resolver import ResourceHandleRuntimeValueResolver
+from ai_simple_engine.execution.runtime_value_resolver.port_reference_resolver import PortReferenceRuntimeValueResolver
 from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.types.data_type import DataType
 from ai_simple_engine.execution.runtime_value_resolver.abstract import RuntimeValueResolver
@@ -35,7 +36,10 @@ class EngineBuilder:
 
         self._model_loaders = []
         self._model_backends = []
-        self._runtime_value_resolvers = []
+        self._runtime_value_resolvers = [
+            PortReferenceRuntimeValueResolver(),
+            ResourceHandleRuntimeValueResolver()
+        ]
         self._operations = []
         self._data_types = []
         # TODO: What about the validators (?)
@@ -159,44 +163,6 @@ class EngineBuilder:
         plugin.register(self)
 
         return self
-
-    def add_provider(
-        self,
-        provider: PluginProvider
-    ) -> 'EngineBuilder':
-        self._ensure_not_built()
-
-        # The provider is now active
-        provider.register(self)
-
-        return self
-
-        # if isinstance(provider, ModelLoaderProvider):
-        #     self._model_loaders.extend(
-        #         provider.model_loaders()
-        #     )
-
-        # if isinstance(provider, ModelRepositoryProvider):
-        #     self._model_backends.extend(
-        #         provider.model_providers()
-        #     )
-
-        # if isinstance(provider, RuntimeValueResolverProvider):
-        #     self._runtime_value_resolvers.extend(
-        #         provider.runtime_value_resolvers()
-        #     )
-
-        # if isinstance(provider, DataTypeProvider):
-        #     self._data_types.extend(
-        #         provider.data_types()
-        #     )
-
-        # if isinstance(provider, OperationProvider):
-        #     self._operations.extend(
-        #         provider.operations()
-        #     )
-
-        # TODO: What about the validators (?)
 
     def add_service(
         self,
