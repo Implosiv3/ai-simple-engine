@@ -10,6 +10,18 @@ class ModelLoader(
     PluginComponent,
     ABC
 ):
+    """
+    Class to load a model and make it ready to use.
+    This will transform an `InstalledModel` into a
+    `LoadedModel` that can be used in the way it
+    should be; I mean, the implementation will be
+    specifically made for that model, which could
+    be using transformers, torch, diffusers, etc.
+    
+    Here you have some examples:
+    - `MusicgenForConditionalGeneration`
+    - `StableDiffusionPipeline`
+    """
     
     @property
     @abstractmethod

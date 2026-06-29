@@ -7,14 +7,14 @@ TModel = TypeVar('TModel')
 TRunner = TypeVar('TRunner')
 TKey = TypeVar('TKey')
 
-class RunnerRegistry(
+class ModelExecutorRegistry(
     KeyedServiceRegistry[TKey, TRunner],
     Generic[TModel, TRunner, TKey],
     ABC
 ):
     """
     Base registry capable of resolving the correct
-    runner for a given model.
+    `ModelExecutor` for a given model.
     """
 
     @abstractmethod

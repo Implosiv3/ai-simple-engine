@@ -5,6 +5,18 @@ from ai_simple_engine.models.model_spec import ModelSpec
 
 
 class ModelRepository:
+    """
+    Class to handle the models that are needed,
+    connect with the `backends` specified and
+    download the models if needed.
+
+    This will hide the way those models are
+    accesible and just provide a way to use them.
+
+    It can include more ethan one backends, which
+    are the classes that can actually download
+    the models from the different platforms.
+    """
     
     def __init__(
         self,

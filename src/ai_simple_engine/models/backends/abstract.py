@@ -8,6 +8,12 @@ class ModelBackend(
     PluginComponent,
     ABC
 ):
+    """
+    Class to encapsulate the ability to obtain models
+    from different sources, getting the specifications
+    and returning an `InstalledModel` instance ready
+    to use.
+    """
 
     @property
     @abstractmethod

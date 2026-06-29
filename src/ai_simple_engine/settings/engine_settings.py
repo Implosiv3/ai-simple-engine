@@ -11,6 +11,7 @@ class EngineSettings:
     all plugins.
     """
 
+    # TODO: Use environment variables here (?)
     models_directory: Path = field(
         default_factory = lambda: Path.home() / '.ai_simple_engine' / 'models'
     )

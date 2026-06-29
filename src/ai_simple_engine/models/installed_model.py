@@ -7,6 +7,12 @@ from typing import Union
 
 @dataclass(frozen = True)
 class InstalledModel:
+    """
+    Class to represent a model that is installed
+    and could be loaded to use it. This is just
+    the reference, but not the model loaded and
+    ready to use.
+    """
 
     spec: ModelSpec
     path: Path

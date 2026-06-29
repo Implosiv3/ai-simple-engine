@@ -9,6 +9,18 @@ from typing import Union
 class Operation(
     ABC
 ):
+    """
+    A task that must be performed. Examples:
+    - Generate music
+    - Generate image
+    - Transcribe with Whisper
+
+    It doesn't know how to download models, load
+    them, execute transformers. It only defines
+    the model that is needed and what should be
+    done.
+    """
+
     _inputs: dict[str, Input] = {}
     _outputs: dict[str, Output] = {}
 

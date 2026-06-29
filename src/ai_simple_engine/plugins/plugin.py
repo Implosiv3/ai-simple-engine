@@ -1,12 +1,24 @@
-from abc import ABC
-
+from abc import ABC, abstractmethod
 
 
 class Plugin(
     ABC
 ):
     
-    def providers(
-        self
+    @abstractmethod
+    def register(
+        self,
+        builder: 'EngineBuilder'
     ) -> list:
-        return []
+        """
+        Register the plugin elements with the `builder`
+        given as parameter. The next things must be
+        included:
+        - Operations
+        - Model Backends
+        - Model Loaders
+        - Data Types
+        - Runtime Value Resolvers
+        - ModelExecutor Registry Services
+        """
+        ...

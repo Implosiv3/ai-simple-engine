@@ -3,8 +3,12 @@ from typing import TypeVar
 
 T = TypeVar('T')
 
-
 class ServiceRegistry:
+    """
+    The registry that includes all the services we
+    will need to use and are shared in between the
+    components.
+    """
 
     def __init__(
         self
