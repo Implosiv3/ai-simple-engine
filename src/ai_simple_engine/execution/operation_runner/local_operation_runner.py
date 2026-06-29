@@ -10,6 +10,15 @@ class LocalOperationRunner(
     async def run(
         self,
         operation: Operation,
+        inputs: dict,
         context: ExecutionContext
     ) -> dict[str, object]:
-        return await operation.execute(context)
+        operation._begin_execution(inputs)
+
+        try:
+            return await operation.execute(context)
+
+        finally:
+            operation._end_execution()
+
+        # return await operation.execute(context)

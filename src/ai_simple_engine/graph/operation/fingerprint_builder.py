@@ -5,7 +5,10 @@ from hashlib import sha256
 from typing import Protocol, Any
 
 
-class FingerprintBuilder:
+class OperationFingerprintBuilder:
+    """
+    Class to build fingerprints of operations.
+    """
 
     @staticmethod
     def _serialize(
@@ -13,7 +16,7 @@ class FingerprintBuilder:
         visited: set
     ) -> bytes:
         if isinstance(value, PortReference):
-            return FingerprintBuilder._build(
+            return OperationFingerprintBuilder._build(
                 value.operation,
                 visited
             ).encode()
@@ -23,7 +26,7 @@ class FingerprintBuilder:
 
             for key in sorted(value):
                 data += key.encode()
-                data += FingerprintBuilder._serialize(
+                data += OperationFingerprintBuilder._serialize(
                     value[key],
                     visited
                 )
@@ -38,7 +41,7 @@ class FingerprintBuilder:
             data = b""
 
             for item in value:
-                data += FingerprintBuilder._serialize(
+                data += OperationFingerprintBuilder._serialize(
                     item,
                     visited
                 )
@@ -58,21 +61,16 @@ class FingerprintBuilder:
         visited.add(operation)
 
         hasher = sha256()
+        hasher.update(operation.__class__.__qualname__.encode())
 
-        hasher.update(
-            operation.__class__.__qualname__.encode()
-        )
-
-        for field in sorted(operation.model_fields):
-
-            value = getattr(operation, field)
-
+        for input_name, _ in sorted(operation.inputs().items()):
+            value = getattr(operation, input_name)
+            hasher.update(input_name.encode())
             hasher.update(
-                field.encode()
-            )
-
-            hasher.update(
-                FingerprintBuilder._serialize(value, visited)
+                OperationFingerprintBuilder._serialize(
+                    value = value,
+                    visited = visited
+                )
             )
 
         return hasher.hexdigest()
@@ -81,7 +79,7 @@ class FingerprintBuilder:
     def build(
         operation: Operation
     ) -> str:
-        return FingerprintBuilder._build(operation, set())
+        return OperationFingerprintBuilder._build(operation, set())
     
 
 

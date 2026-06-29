@@ -1,7 +1,7 @@
 from ai_simple_engine.graph.graph_validator import GraphValidator
 from ai_simple_engine.graph.graph_builder import GraphBuilder
 from ai_simple_engine.graph.operation.base import Operation
-from ai_simple_engine.graph.operation.fingerprint_builder import FingerprintBuilder
+from ai_simple_engine.graph.operation.fingerprint_builder import OperationFingerprintBuilder
 from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.exceptions.execution_error import ExecutionError
 from ai_simple_engine.execution.execution_planner import ExecutionPlanner
@@ -55,7 +55,7 @@ class Executor:
         operation: Operation,
         context: ExecutionContext
     ) -> None:
-        fingerprint = FingerprintBuilder.build(operation)
+        fingerprint = OperationFingerprintBuilder.build(operation)
 
         if context.cache.contains(fingerprint):
             context.store(
