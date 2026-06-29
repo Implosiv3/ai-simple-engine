@@ -27,7 +27,7 @@ class RuntimeValueResolver(
         ...
 
     @abstractmethod
-    def resolve(
+    async def resolve(
         self,
         value: object,
         context: ExecutionContext

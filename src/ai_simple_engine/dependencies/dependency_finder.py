@@ -1,4 +1,4 @@
-from ai_simple_engine.dependencies.utils import find_port_references
+from ai_simple_engine.dependencies.utils import find_operations
 from ai_simple_engine.graph.operation.base import Operation
 
 
@@ -17,7 +17,7 @@ class DependencyFinder:
 
         This method is doing `yield`.
         """
-        for reference in find_port_references(operation):
-            yield reference.operation
+        for reference in find_operations(operation):
+            yield reference
 
         # return iter_dependencies(operation)

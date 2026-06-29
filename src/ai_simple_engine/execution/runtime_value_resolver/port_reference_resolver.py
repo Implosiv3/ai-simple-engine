@@ -16,12 +16,12 @@ class PortReferenceRuntimeValueResolver(
             PortReference
         )
 
-    def resolve(
+    async def resolve(
         self,
         value: PortReference,
         context: ExecutionContext
     ):
-        return context.output(
+        return await context.output(
             value.operation,
             value.name
         )

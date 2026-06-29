@@ -30,7 +30,7 @@ class AcquireModel(
         self,
         context
     ):
-        loader = context.model_loaders.resolve(self.model)
+        loader = context.model_loaders.resolve(self.installed_model)
 
         handle = await context.resources.register(
             ModelResource(

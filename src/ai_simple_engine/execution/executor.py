@@ -84,7 +84,6 @@ class Executor:
                 inputs = resolved_inputs,
                 context = context
             )
-
         finally:
             operation._end_execution()
 
@@ -115,7 +114,7 @@ class Executor:
         """
         for resolver in self._runtime_values_resolvers:
             if resolver.is_supported(value):
-                resolved = resolver.resolve(
+                resolved = await resolver.resolve(
                     value,
                     context
                 )

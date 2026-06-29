@@ -71,8 +71,6 @@ class ExecutionPlanner:
                     queue.append(dependent)
 
         if len(ordered) != len(nodes):
-            raise RuntimeError(
-                "Cycle detected."
-            )
+            raise RuntimeError('Cycle detected.')
 
         return ordered
