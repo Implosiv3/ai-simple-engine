@@ -88,9 +88,10 @@ class Engine:
         context = ExecutionContext(
             settings = self._settings,
             model_repository = self._model_repository,
+            model_loader_registry = self._model_loader_registry,
             resource_manager = self._resource_manager,
             cache = self._cache,
-            services = self._services,
+            service_registry = self._services,
         )
 
         await self._executor.run(

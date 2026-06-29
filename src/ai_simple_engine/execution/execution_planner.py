@@ -1,7 +1,10 @@
 from ai_simple_engine.graph.graph import Graph
+from ai_simple_engine.dependencies.dependency_finder import DependencyFinder
+from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.execution.execution_plan import ExecutionPlan
 from ai_simple_engine.execution.execution_node import ExecutionNode
 from collections import deque
+from typing import Iterable
 
 
 class ExecutionPlanner:
@@ -27,6 +30,18 @@ class ExecutionPlanner:
         )
 
         return ExecutionPlan(ordered)
+    
+    def _dependencies(
+        self,
+        operation: Operation
+    ) -> Iterable[Operation]:
+        return DependencyFinder().find(operation)
+    
+        # for name in operation.inputs():
+        #     value = getattr(operation, name)
+
+        #     for reference in find_port_references(value):
+        #         yield reference.operation
     
     def _topological_sort(
         self,

@@ -17,7 +17,7 @@ class GraphValidator:
     ):
         for operation in graph.operations:
             for name, input in operation.inputs().items():
-                if input.optional:
+                if input.is_optional:
                     continue
 
                 if not hasattr(operation, name):

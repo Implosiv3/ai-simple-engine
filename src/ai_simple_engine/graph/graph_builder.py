@@ -1,11 +1,17 @@
 from ai_simple_engine.graph.graph import Graph
 from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.graph.port_reference import PortReference
-from typing import Union, Iterable, Mapping, Sequence
+from ai_simple_engine.dependencies.dependency_finder import DependencyFinder
+from typing import Union, Iterable
 from uuid import UUID
 
 
 class GraphBuilder:
+
+    def __init__(
+        self
+    ):
+        self._dependency_finder = DependencyFinder()
 
     def build(
         self,
@@ -18,21 +24,30 @@ class GraphBuilder:
 
         for target in targets:
             if isinstance(target, Operation):
-                self._visit_operation(target, operations)
+                self._visit_operation(
+                    operation = target,
+                    operations = operations
+                )
             elif isinstance(target, PortReference):
-                self._visit_operation(target.operation, operations)
+                self._visit_operation(
+                    operation = target.operation,
+                    operations = operations
+                )
             else:
                 raise TypeError(f'Unsupported target: {type(target)}')
 
-        return Graph(
-            list(operations.values())
-        )
+        graph = Graph()
+
+        for operation in operations.values():
+            graph.add(operation)
+
+        return graph
     
     def _visit_operation(
         self,
         operation: Operation,
         operations: dict[UUID, Operation]
-    ):
+    ) -> None:
         if operation.id in operations:
             return
         
@@ -48,34 +63,8 @@ class GraphBuilder:
 
         operations[operation.id] = operation
 
-        for value in operation._connections.values():
-            self._visit_value(
-                value,
-                operations
-            )
-
-    def _visit_value(
-        self,
-        value,
-        operations: dict[UUID, Operation]
-    ):
-        if isinstance(value, PortReference):
+        for dependency in self._dependency_finder.find(operation):
             self._visit_operation(
-                value.operation,
+                dependency,
                 operations
             )
-
-            return
-
-        if isinstance(value, Mapping):
-            for item in value.values():
-                self._visit_value(item, operations)
-
-            return
-
-        if (
-            isinstance(value, Sequence) and
-            not isinstance(value, (str, bytes))
-        ):
-            for item in value:
-                self._visit_value(item, operations)
