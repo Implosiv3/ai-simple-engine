@@ -14,8 +14,8 @@ from typing import Iterable, Union
 
 class Executor:
     """
-    *Do not instantiate this class, use `.execute`
-    instead*
+    The class that will process the operations
+    in the order they have to be done.
     """
 
     def __init__(
@@ -137,7 +137,7 @@ class Executor:
             not isinstance(value, (str, bytes))
         ):
             return type(value)(
-                self._resolve_value(v, context)
+                await self._resolve_value(v, context)
                 for v in value
             )
 

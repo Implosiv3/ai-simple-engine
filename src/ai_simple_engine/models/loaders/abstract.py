@@ -39,10 +39,9 @@ class ModelLoader(
     @abstractmethod
     async def load(
         self,
-        model: InstalledModel,
-        *,
+        installed_model: InstalledModel,
         device: Device
-    ) -> LoadedModel:
+    ) -> object:
         ...
 
     async def unload(

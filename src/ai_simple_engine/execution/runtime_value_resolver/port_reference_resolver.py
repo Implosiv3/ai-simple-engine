@@ -21,7 +21,7 @@ class PortReferenceRuntimeValueResolver(
         value: PortReference,
         context: ExecutionContext
     ):
-        return await context.output(
+        return context.output(
             value.operation,
             value.name
         )

@@ -1,5 +1,6 @@
 from ai_simple_engine.resources.resource_handle import ResourceHandle
 from ai_simple_engine.models.installed_model import InstalledModel
+from ai_simple_engine.models.loaded_model import LoadedModel
 from ai_simple_engine.models.model_spec import ModelSpec
 from ai_simple_engine.device.base import Device
 from ai_simple_engine.types.audio import Audio
@@ -123,6 +124,11 @@ RESOURCE = DataType(
 INSTALLED_MODEL = DataType(
     name = 'InstalledModel',
     runtime_type = InstalledModel,
+    parent = None
+)
+LOADED_MODEL = DataType(
+    name = 'LoadedModel',
+    runtime_type = LoadedModel,
     parent = None
 )
 MODEL_SPEC = DataType(

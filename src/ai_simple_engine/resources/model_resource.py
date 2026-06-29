@@ -17,7 +17,7 @@ class ModelResource(
         return ResourceKey(
             category = 'model',
             identifier = f'{self._model.provider}:{self._model.family}:{self._model.identifier}',
-            device = str(self._device)
+            variant = str(self._device)
         )
 
     def __init__(

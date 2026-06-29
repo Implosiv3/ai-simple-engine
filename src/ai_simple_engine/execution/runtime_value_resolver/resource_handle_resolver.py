@@ -21,4 +21,4 @@ class ResourceHandleRuntimeValueResolver(
         value: ResourceHandle,
         context: ExecutionContext
     ):
-        return await context.resources.get(value)
+        return context.resources.get(value).value
