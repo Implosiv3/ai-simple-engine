@@ -13,12 +13,4 @@ class LocalOperationRunner(
         inputs: dict,
         context: ExecutionContext
     ) -> dict[str, object]:
-        operation._begin_execution(inputs)
-
-        try:
-            return await operation.execute(context)
-
-        finally:
-            operation._end_execution()
-
-        # return await operation.execute(context)
+        return await operation.execute(context)

@@ -14,4 +14,11 @@ class OperationRunner(
         inputs: dict,
         context: ExecutionContext
     ) -> dict[str, object]:
+        """
+        This method will run the `operation` with the
+        given `context`. The `inputs` could be necessary
+        in some cases (serialization for an external
+        service), so it must be implemented by all the
+        `OperationRunner` classes.
+        """
         ...
