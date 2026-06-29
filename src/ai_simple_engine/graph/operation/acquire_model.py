@@ -14,7 +14,11 @@ class AcquireModel(
         DEVICE,
         default = 'cuda'
     )
-    loaded_model = Output(RESOURCE)
+    model = Output(RESOURCE)
+    """
+    The `LoadedModel` that will become as the model
+    acquired.
+    """
 
     async def execute(
         self,
@@ -31,5 +35,5 @@ class AcquireModel(
         )
 
         return {
-            'loaded_model': handle
+            'model': handle
         }

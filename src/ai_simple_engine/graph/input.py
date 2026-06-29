@@ -24,7 +24,7 @@ class Input(
         *,
         default = MISSING,
         is_optional: bool = False,
-        validators: Union[list['DataTypeValidator'], None] = None,
+        validators: Union[list['DataTypeValidator'], None] = [],
         description: Union[str, None] = None
     ):
         super().__init__(
