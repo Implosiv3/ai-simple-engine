@@ -156,8 +156,7 @@ class EngineBuilder:
     ) -> 'EngineBuilder':
         self._ensure_not_built()
 
-        for provider in plugin.providers():
-            self.add_provider(provider)
+        plugin.register(self)
 
         return self
 

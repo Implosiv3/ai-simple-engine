@@ -49,6 +49,8 @@ class Operation(
             port.validate(value)
 
             self._connections[name] = value
+            # Initialize the values to have them
+            setattr(self, name, value)
 
     def __init_subclass__(
         cls,
@@ -82,12 +84,40 @@ class Operation(
         self,
         inputs: dict[str, object]
     ) -> None:
-        self._resolved_inputs = inputs
+        """
+        *For internal use only*
+
+        Method to load the `inputs` that have been 
+        resolved and must be used for the operation.
+
+        This method will temporary replace the
+        original inputs with the given ones, that
+        will be restored in the `_end_execution`
+        method.
+        """
+        self._original_inputs = {}
+
+        for name, value in inputs.items():
+            self._original_inputs[name] = self._connections[name]
+            setattr(self, name, value)
 
     def _end_execution(
         self
     ) -> None:
-        self._resolved_inputs.clear()
+        """
+        *For internal use only*
+
+        Method to restore the original `inputs` after
+        the resolved have been used for the operation.
+
+        This method will restore the original inputs
+        after the resolved ones have been used to
+        perform the operation.
+        """
+        for name, value in self._original_inputs.items():
+            setattr(self, name, value)
+
+        self._original_inputs.clear()
 
     def expand(
         self
@@ -130,8 +160,17 @@ class Operation(
     @abstractmethod
     async def execute(
         self,
-        context
+        context: 'ExecutionContext'
     ) -> dict[str, object]:
+        """
+        The code that will perform the real operation
+        with the values that have being resolved in
+        the `_begin_execution` method and are restored
+        in the `_end_execution` method.
+
+        This method will be called by the executor in
+        between the call to those 2 methods.
+        """
         ...
 
     
