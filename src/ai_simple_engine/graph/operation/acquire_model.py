@@ -1,8 +1,9 @@
 from ai_simple_engine.graph.operation.base import Operation
+from ai_simple_engine.resources.model_resource import ModelResource
 from ai_simple_engine.graph.input import Input
 from ai_simple_engine.graph.output import Output
 from ai_simple_engine.models.loaded_model import LoadedModel
-from ai_simple_engine.types.data_type import DEVICE, INSTALLED_MODEL, LOADED_MODEL
+from ai_simple_engine.types.data_type.base import DEVICE, INSTALLED_MODEL, LOADED_MODEL
 from ai_simple_engine.device.base import CUDA
 
 
@@ -17,7 +18,7 @@ class AcquireModel(
 
     installed_model = Input(INSTALLED_MODEL)
     device = Input(
-        DEVICE,
+        type = DEVICE,
         default = CUDA
     )
     model = Output(LOADED_MODEL)
@@ -31,6 +32,7 @@ class AcquireModel(
         context
     ):
         loader = context.model_loaders.resolve(self.installed_model)
+        print(loader)
 
         instance = await loader.load(
             installed_model = self.installed_model,
@@ -42,7 +44,13 @@ class AcquireModel(
             instance = instance
         )
 
-        await context.resources.register(loaded_model)
+        await context.resources.acquire(
+            ModelResource(
+                model = loaded_model,
+                loader = loader,
+                device = self.device
+            )
+        )
 
         return {
             'model': loaded_model

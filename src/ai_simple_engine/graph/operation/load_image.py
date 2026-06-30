@@ -1,5 +1,5 @@
 from ai_simple_engine.graph.operation.base import Operation
-from ai_simple_engine.types.data_type import IMAGE
+from ai_simple_engine.types.data_type.base import IMAGE
 
 
 class LoadImage(

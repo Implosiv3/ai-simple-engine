@@ -1,5 +1,5 @@
 from ai_simple_engine.models.installed_model import InstalledModel
-from ai_simple_engine.models.model_family import ModelFamily
+from ai_simple_engine.models.family.base import ModelFamily
 from dataclasses import dataclass
 from typing import Generic, TypeVar, Union
 

@@ -2,6 +2,10 @@
 TODO: Maybe this module shouldn't be here.
 """
 class Cache:
+    """
+    Basic cache that stores the `entries` 
+    identified by a `fingerprint`.
+    """
 
     def __init__(
         self

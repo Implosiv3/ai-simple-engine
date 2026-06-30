@@ -1,5 +1,5 @@
-from ai_simple_engine.models.model_spec import ModelSpec
-from ai_simple_engine.models.model_family import ModelFamily
+from ai_simple_engine.models.spec.model_spec import ModelSpec
+from ai_simple_engine.models.family.base import ModelFamily
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Union

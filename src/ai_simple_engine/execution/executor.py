@@ -48,6 +48,9 @@ class Executor:
                 context
             )
 
+        # Execution has finished: release resources
+        context.resources.release()
+
         return context
     
     async def _execute(

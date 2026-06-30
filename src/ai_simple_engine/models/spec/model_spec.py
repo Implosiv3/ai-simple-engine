@@ -1,4 +1,4 @@
-from ai_simple_engine.models.model_family import ModelFamily
+from ai_simple_engine.models.family.base import ModelFamily
 from dataclasses import dataclass
 from typing import Union, Dict, Optional, Callable
 from pathlib import Path
@@ -26,7 +26,7 @@ class ModelSpec:
     revision: Union[str, None] = None
 
 
-# TODO: What about this below (?)
+# TODO: This below is not being used (!)
 
 class ModelRegistry:
 

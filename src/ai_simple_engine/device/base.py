@@ -5,7 +5,10 @@ from typing import Union
 @dataclass(frozen = True)
 class Device:
     """
-    Represents a computation device.
+    Identification of a specific computation
+    device, which is useful when using models.
+    Executing a model in CPU is not the same
+    than using cuda (GPU).
     """
 
     identifier: str

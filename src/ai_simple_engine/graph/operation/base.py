@@ -10,6 +10,12 @@ class Operation(
     ABC
 ):
     """
+    *Abstract class*
+
+    The base class for any kind of operation,
+    that includes `inputs`, `outputs` and will
+    perform some tasks in between.
+
     A task that must be performed. Examples:
     - Generate music
     - Generate image

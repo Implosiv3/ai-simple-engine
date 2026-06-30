@@ -37,12 +37,6 @@ class ExecutionPlanner:
     ) -> Iterable[Operation]:
         return DependencyFinder().find(operation)
     
-        # for name in operation.inputs():
-        #     value = getattr(operation, name)
-
-        #     for reference in find_port_references(value):
-        #         yield reference.operation
-    
     def _topological_sort(
         self,
         nodes: list[ExecutionNode]

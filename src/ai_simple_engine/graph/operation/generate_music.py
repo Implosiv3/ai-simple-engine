@@ -1,7 +1,7 @@
 from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.graph.input import Input
 from ai_simple_engine.graph.output import Output
-from ai_simple_engine.types.data_type import AUDIO, STRING, RESOURCE
+from ai_simple_engine.types.data_type.base import AUDIO, STRING, RESOURCE
 
 
 class GenerateMusic(

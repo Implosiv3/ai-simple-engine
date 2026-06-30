@@ -8,6 +8,8 @@ class RuntimeValueResolver(
     ABC
 ):
     """
+    *Abstract class*
+    
     Class to resolve special values into real values
     that can be used by the nodes, using not any model.
     Here you have some examples:
@@ -24,6 +26,11 @@ class RuntimeValueResolver(
         self,
         value: object
     ) -> bool:
+        """
+        Check if the `value` provided is supported
+        or not by the specific `RuntimeValueResolver`
+        implementation.
+        """
         ...
 
     @abstractmethod
@@ -32,4 +39,10 @@ class RuntimeValueResolver(
         value: object,
         context: ExecutionContext
     ) -> object:
+        """
+        Resolve the `ResourceHandle` that comes as
+        `value` to be able to use it. This means 
+        that the resource will be loaded so it can
+        be used to perform the operations.
+        """
         ...

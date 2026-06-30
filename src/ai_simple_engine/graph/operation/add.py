@@ -1,5 +1,5 @@
 from ai_simple_engine.graph.operation.base import Operation
-from ai_simple_engine.types.data_type import INT
+from ai_simple_engine.types.data_type.base import INT
 
 
 class Add(

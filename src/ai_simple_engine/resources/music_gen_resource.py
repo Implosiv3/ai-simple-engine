@@ -1,5 +1,5 @@
-from ai_simple_engine.resources.resource import Resource
-from ai_simple_engine.resources.resource_key import ResourceKey
+from ai_simple_engine.resources.abstract import Resource
+from ai_simple_engine.resources.key.base import ResourceKey
 
 
 class MusicGenResource(

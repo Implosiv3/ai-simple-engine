@@ -1,10 +1,12 @@
-# from ai_simple_engine.graph.operation.base import Operation
-# from ai_simple_engine.graph.output import Output
 from dataclasses import dataclass
 
 
 @dataclass(frozen = True, slots = True)
 class PortReference:
+    """
+    A basic reference to a port that uses
+    its `name` and `type` to identify it.
+    """
 
     operation: 'Operation'
     output: 'Output'

@@ -10,6 +10,7 @@ class LocalOperationRunner(
     async def run(
         self,
         operation: Operation,
+        # Let it here to respect the structure
         inputs: dict,
         context: ExecutionContext
     ) -> dict[str, object]:

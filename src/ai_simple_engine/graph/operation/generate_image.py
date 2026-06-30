@@ -1,7 +1,7 @@
 from ai_simple_engine.graph.operation.composite_operation import CompositeOperation
 from ai_simple_engine.graph.operation.load_model import LoadModel
 from ai_simple_engine.graph.output import Output
-from ai_simple_engine.types.data_type import IMAGE
+from ai_simple_engine.types.data_type.base import IMAGE
 
 
 # TODO: This will be in a specific module/library

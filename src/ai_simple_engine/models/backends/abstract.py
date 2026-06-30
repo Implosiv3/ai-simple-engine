@@ -1,5 +1,5 @@
 from ai_simple_engine.models.installed_model import InstalledModel
-from ai_simple_engine.models.model_spec import ModelSpec
+from ai_simple_engine.models.spec.model_spec import ModelSpec
 from ai_simple_engine.plugins.plugin_component import PluginComponent
 from abc import ABC, abstractmethod
 
@@ -9,10 +9,9 @@ class ModelBackend(
     ABC
 ):
     """
-    Class to encapsulate the ability to obtain models
-    from different sources, getting the specifications
-    and returning an `InstalledModel` instance ready
-    to use.
+    Class to obtain models with the given `ModelSpec`
+    from different sources (providers) and install them
+    as `InstalledModel` to be able to use them later.
     """
 
     @property

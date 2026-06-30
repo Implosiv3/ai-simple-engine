@@ -3,6 +3,11 @@ from ai_simple_engine.graph.port_reference import PortReference
 
 
 class GraphValidator:
+    """
+    Class to validate all the operations of a
+    `Graph`: the types, the references,
+    the inputs provided, etc.
+    """
 
     def validate(
         self,
@@ -21,16 +26,12 @@ class GraphValidator:
                     continue
 
                 if not hasattr(operation, name):
-                    raise ValueError(
-                        f'{operation.__class__.__name__}.{name} is missing.'
-                    )
+                    raise ValueError(f'{operation.__class__.__name__}.{name} is missing.')
 
                 value = getattr(operation, name)
 
                 if value is None:
-                    raise ValueError(
-                        f'{operation.__class__.__name__}.{name} is required.'
-                    )
+                    raise ValueError(f'{operation.__class__.__name__}.{name} is required.')
                 
     def _validate_types(
         self,

@@ -4,6 +4,13 @@ from abc import ABC, abstractmethod
 class Plugin(
     ABC
 ):
+    """
+    *Abstract class*
+
+    Class to include all the operations, model
+    backends, data types, operations, etc. that
+    this plugin (extra functionality) includes.
+    """
     
     @abstractmethod
     def register(

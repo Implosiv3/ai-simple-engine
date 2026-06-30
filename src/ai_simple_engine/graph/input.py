@@ -1,5 +1,4 @@
-from ai_simple_engine.types.data_type import DataType
-# from ai_simple_engine.types.validator.abstract import DataTypeValidator
+from ai_simple_engine.types.data_type.base import DataType
 from ai_simple_engine.types.validator.exceptions import ValidationError
 from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.graph.port import Port

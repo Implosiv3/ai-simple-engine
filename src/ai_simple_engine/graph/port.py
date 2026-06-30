@@ -1,4 +1,4 @@
-from ai_simple_engine.types.data_type import DataType
+from ai_simple_engine.types.data_type.base.base import DataType
 from typing import Union
 from abc import ABC
 

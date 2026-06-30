@@ -3,6 +3,10 @@ from collections.abc import Iterable
 
 
 class PluginRegistry:
+    """
+    Registry in which we include all the plugins
+    that we are including.
+    """
 
     def __init__(
         self

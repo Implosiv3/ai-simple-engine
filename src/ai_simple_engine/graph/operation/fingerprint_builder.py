@@ -7,7 +7,15 @@ from typing import Protocol, Any
 
 class OperationFingerprintBuilder:
     """
-    Class to build fingerprints of operations.
+    Class to build fingerprints of operations
+    to identify them using not only the
+    operation itself but also the previous that
+    will generate outputs that will reach this
+    operation.
+
+    If a previous operation changes, the output
+    could be different so also the inputs of
+    this one.
     """
 
     @staticmethod

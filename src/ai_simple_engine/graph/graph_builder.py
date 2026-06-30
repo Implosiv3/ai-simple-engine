@@ -7,6 +7,11 @@ from uuid import UUID
 
 
 class GraphBuilder:
+    """
+    Class capable of building the `Graph`
+    by using all the `targets` provided,
+    that can be `Operation` or `PortReference`.
+    """
 
     def __init__(
         self

@@ -4,7 +4,9 @@ from ai_simple_engine.graph.operation.base import Operation
 
 class DependencyFinder:
     """
-    Class to simplify the way we find dependencies.
+    Class to simplify the way we find the
+    dependencies of an `Operation`, which
+    are the ones connected to it as inputs.
     """
 
     def find(
@@ -19,5 +21,3 @@ class DependencyFinder:
         """
         for reference in find_operations(operation):
             yield reference
-
-        # return iter_dependencies(operation)

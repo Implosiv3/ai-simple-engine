@@ -2,6 +2,10 @@ from ai_simple_engine.graph.operation.base import Operation
 
 
 class Graph:
+    """
+    Graph that includes all the operations that
+    must be performed.
+    """
 
     def __init__(
         self

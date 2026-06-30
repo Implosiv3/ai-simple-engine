@@ -6,7 +6,8 @@ from dataclasses import dataclass
 @dataclass(frozen = True)
 class PluginContext:
     """
-    Shared context passed to all plugin components.
+    Shared context passed to all plugin components
+    that includes the `settings` and the `services`.
     """
 
     settings: EngineSettings

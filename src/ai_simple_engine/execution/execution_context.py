@@ -1,7 +1,7 @@
 from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.graph.port_reference import PortReference
-from ai_simple_engine.resources.resources_manager import ResourceManager
-from ai_simple_engine.models.model_repository import ModelRepository
+from ai_simple_engine.resources.manager.base import ResourceManager
+from ai_simple_engine.models.repository.base import ModelRepository
 from ai_simple_engine.models.loaders.model_loader_registry import ModelLoaderRegistry
 from ai_simple_engine.services.service_registry import ServiceRegistry
 from ai_simple_engine.cache.base import Cache
@@ -10,6 +10,12 @@ from uuid import UUID
 
 
 class ExecutionContext:
+    """
+    All the context that will be used when
+    executing operations, providing the
+    cache, services, settings, model
+    loaders, etc.
+    """
 
     def __init__(
         self,
@@ -61,15 +67,3 @@ class ExecutionContext:
         name: str
     ) -> object:
         return self._operation_outputs[operation.id][name]
-    
-
-
-# TODO: Move to a utils (?)
-def result(
-    self,
-    reference: PortReference
-):
-    return self.output(
-        reference.operation,
-        reference.port.name
-    )
