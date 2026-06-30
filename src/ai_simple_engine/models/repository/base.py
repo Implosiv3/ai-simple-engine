@@ -1,7 +1,7 @@
 from ai_simple_engine.models.installed_model import InstalledModel
 from ai_simple_engine.models.backends.abstract import ModelBackend
 from ai_simple_engine.models.backends.model_backend_registry import ModelBackendRegistry
-from ai_simple_engine.models.spec.model_spec import ModelSpec
+from ai_simple_engine.models.spec.base import ModelSpec
 
 
 class ModelRepository:

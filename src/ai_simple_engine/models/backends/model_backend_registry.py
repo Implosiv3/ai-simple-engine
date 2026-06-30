@@ -1,5 +1,5 @@
 from ai_simple_engine.models.backends.abstract import ModelBackend
-from ai_simple_engine.models.spec.model_spec import ModelSpec
+from ai_simple_engine.models.spec.base import ModelSpec
 from ai_simple_engine.resolver_registry import ResolverRegistry
 
 
