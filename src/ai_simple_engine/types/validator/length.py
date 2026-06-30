@@ -19,7 +19,6 @@ class LengthDataTypeValidator(
         name: str,
         value
     ) -> None:
-
         length = len(value)
 
         if (

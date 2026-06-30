@@ -17,7 +17,6 @@ class ChoicesDataTypeValidator(
         name: str,
         value
     ) -> None:
-
         if value not in self._choices:
             raise ValidationError(
                 f"'{name}' must be one of {sorted(self._choices)}."

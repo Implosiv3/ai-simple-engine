@@ -11,6 +11,6 @@ class ResourceKey:
     the same resource twice if we already have it.
     """
 
-    category: str  # 'type' before
+    category: str
     identifier: str
-    variant: Union[str, None] = None  # 'device' before
+    variant: Union[str, None] = None

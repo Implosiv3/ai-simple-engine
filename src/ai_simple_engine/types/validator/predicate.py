@@ -29,7 +29,6 @@ class PredicateDataTypeValidator(
         name: str,
         value
     ) -> None:
-
         if not self._predicate(value):
             raise ValidationError(
                 self._message.format(

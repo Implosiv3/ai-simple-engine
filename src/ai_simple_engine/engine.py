@@ -3,7 +3,7 @@ from ai_simple_engine.execution.executor import Executor
 from ai_simple_engine.execution.runtime_value_resolver.abstract import RuntimeValueResolver
 from ai_simple_engine.execution.execution_context import ExecutionContext
 from ai_simple_engine.services.service_registry import ServiceRegistry
-from ai_simple_engine.models.loaders.model_loader_registry import ModelLoaderRegistry
+from ai_simple_engine.models.loaders.registry.base import ModelLoaderRegistry
 from ai_simple_engine.graph.graph_builder import GraphBuilder
 from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.resources.manager.base import ResourceManager
