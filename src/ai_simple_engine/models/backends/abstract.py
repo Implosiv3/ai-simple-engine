@@ -1,5 +1,5 @@
 from ai_simple_engine.models.installed_model import InstalledModel
-from ai_simple_engine.models.spec.model_spec import ModelSpec
+from ai_simple_engine.models.spec.base import ModelSpec
 from ai_simple_engine.plugins.plugin_component import PluginComponent
 from abc import ABC, abstractmethod
 
