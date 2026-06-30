@@ -113,6 +113,25 @@ class ResourceManager:
             del self._resources[handle.key]
 
         return self
+    
+    async def release_all(
+        self
+    ) -> None:
+        """
+        Release all the instances and reset the
+        references counter and everything. This
+        must be called by the Executor when the
+        whole execution has finished.
+        """
+        for key in list(self._instances):
+            resource = self._resources[key]
+            instance = self._instances[key]
+
+            await resource.unload(instance)
+
+        self._instances.clear()
+        self._resources.clear()
+        self._references.clear()
         
     def _increment_references(
         self,

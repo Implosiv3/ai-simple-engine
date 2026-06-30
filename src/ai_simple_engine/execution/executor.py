@@ -9,7 +9,7 @@ from ai_simple_engine.execution.execution_context import ExecutionContext
 from ai_simple_engine.execution.operation_runner.abstract import OperationRunner
 from ai_simple_engine.execution.runtime_value_resolver.abstract import RuntimeValueResolver
 from collections.abc import Mapping, Sequence
-from typing import Iterable, Union
+from typing import Iterable
 
 
 class Executor:
@@ -49,7 +49,7 @@ class Executor:
             )
 
         # Execution has finished: release resources
-        context.resources.release()
+        context.resources.release_all()
 
         return context
     
