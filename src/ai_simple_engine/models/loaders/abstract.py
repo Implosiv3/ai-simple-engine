@@ -16,10 +16,6 @@ class ModelLoader(
     should be; I mean, the implementation will be
     specifically made for that model, which could
     be using transformers, torch, diffusers, etc.
-    
-    Here you have some examples:
-    - `MusicgenForConditionalGeneration`
-    - `StableDiffusionPipeline`
     """
     
     @property
