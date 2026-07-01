@@ -22,6 +22,7 @@ from ai_simple_engine.graph.operation.acquire_model import AcquireModel
 from ai_simple_engine.graph.operation.install_model import InstallModel
 from ai_simple_engine.plugins.plugin_context import PluginContext
 from ai_simple_engine.services.service_registry import ServiceRegistry, T
+from typing import Callable, Union
 
 
 class EngineBuilder:
@@ -176,6 +177,36 @@ class EngineBuilder:
         plugin.register(self)
 
         return self
+    
+    def get_or_add_service(
+        self,
+        service_type: type[T],
+        factory: Union[Callable[[], T], None] = None
+    ) -> T:
+        """
+        Get the service of the `service_type` given,
+        if existing, or add it (using the `factory` if
+        provided) and return it.
+        """
+        try:
+            service = self._services.get(service_type)
+        except:
+            pass
+
+        if service is not None:
+            return service
+
+        if factory is None:
+            service = service_type()
+        else:
+            service = factory()
+
+        self.register(
+            service_type,
+            service
+        )
+
+        return service
 
     def add_service(
         self,
