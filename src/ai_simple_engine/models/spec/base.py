@@ -1,4 +1,3 @@
-from ai_simple_engine.models.family.base import ModelFamily
 from dataclasses import dataclass
 from typing import Union, Dict, Optional, Callable
 from pathlib import Path
@@ -16,7 +15,7 @@ class ModelSpec:
     - `revision`
     """
 
-    family: ModelFamily
+    family: str
     provider: str
     """
     Hugginface, a local path, an url. The source of

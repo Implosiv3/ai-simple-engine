@@ -1,5 +1,4 @@
 from ai_simple_engine.models.spec.base import ModelSpec
-from ai_simple_engine.models.family.base import ModelFamily
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
@@ -20,7 +19,7 @@ class InstalledModel:
     @property
     def family(
         self
-    ) -> ModelFamily:
+    ) -> str:
         """
         Get the `family` of the specifications `spec`.
         """

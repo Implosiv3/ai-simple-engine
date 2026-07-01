@@ -1,5 +1,4 @@
 from ai_simple_engine.models.installed_model import InstalledModel
-from ai_simple_engine.models.family.base import ModelFamily
 from dataclasses import dataclass
 from typing import Generic, TypeVar, Union
 
@@ -21,7 +20,7 @@ class LoadedModel(
     @property
     def family(
         self
-    ) -> ModelFamily:
+    ) -> str:
         """
         Get the `family` of the specifications `spec`
         of the `installed_model`.
