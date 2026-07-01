@@ -188,6 +188,8 @@ class EngineBuilder:
         if existing, or add it (using the `factory` if
         provided) and return it.
         """
+        service = None
+
         try:
             service = self._services.get(service_type)
         except:
@@ -201,7 +203,7 @@ class EngineBuilder:
         else:
             service = factory()
 
-        self.register(
+        self.add_service(
             service_type,
             service
         )
