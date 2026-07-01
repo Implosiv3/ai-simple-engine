@@ -12,6 +12,6 @@ class ModelFamily:
         return self.name
     
 
-MUSICGEN = ModelFamily('musicgen')
-WHISPER = ModelFamily('whisper')
-STABLE_DIFFUSION = ModelFamily('stable_diffusion')
+# TODO: Migrate to their libraries
+# WHISPER = ModelFamily('whisper')
+# STABLE_DIFFUSION = ModelFamily('stable_diffusion')

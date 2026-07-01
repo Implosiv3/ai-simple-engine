@@ -264,7 +264,7 @@ class EngineBuilder:
             *self._model_backends,
             *self._model_loaders,
             *self._runtime_value_resolvers,
-            *self._data_type_validators,
+            # *self._data_type_validators,
         ]
 
         for component in components:

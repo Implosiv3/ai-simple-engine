@@ -15,7 +15,7 @@ class ModelLoaderRegistry(
         self,
         model: InstalledModel
     ) -> str:
-        return model.family
+        return model.family.name
 
 
 

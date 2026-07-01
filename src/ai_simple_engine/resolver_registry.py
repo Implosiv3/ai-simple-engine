@@ -33,6 +33,4 @@ class ResolverRegistry(
         """
         Resolves the appropriate service for the given object.
         """
-        return self.get(
-            self.key_for(value)
-        )
+        return self.get(self.key_for(value))
