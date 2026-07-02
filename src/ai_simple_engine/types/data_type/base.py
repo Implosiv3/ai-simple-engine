@@ -125,8 +125,8 @@ PATH = DataType(
 )
 
 # Specific types
-RESOURCE = DataType(
-    name = 'Resource',
+RESOURCE_HANDLE = DataType(
+    name = 'ResourceHandle',
     runtime_type = ResourceHandle,
     parent = None
 )

@@ -14,59 +14,22 @@ class ResourceManager:
     ):
         self._resources: dict[ResourceKey, Resource] = {}
         self._instances: dict[ResourceKey, object] = {}
-        self._references: dict[ResourceKey, int] = {}
-
-    async def register(
-        self,
-        resource: Resource
-    ) -> None:
-        """
-        Register the given `resource` in the internal
-        resources list if it was not registered before.
-        """
-        self._resources.setdefault(
-            resource.key,
-            resource
-        )
-
-    async def acquire(
-        self,
-        resource: Resource
-    ) -> ResourceHandle:
-        """
-        Acquire the given `resource` from the internal
-        list. This method will register if it was not
-        already registered.
-
-        This method will decrease the reference to
-        that resource by 1, and remove it if the
-        number of references reaches 0.
-
-        This method will return a `ResourceHandle`
-        instance.
-        """
-        await self.register(resource)
-
-        resource = self._resources[resource.key]
-
-        self._increment_references(resource.key)
-
-        return ResourceHandle(resource.key)
 
     async def register(
         self,
         resource: Resource
     ) -> ResourceHandle:
         """
-        Register the `resource` provided by using its
-        internal key.
-        
-        This will increate the reference to that
-        resource by 1.
+        Register the `resource` provided, if not
+        registered, and return a `ResourceHandle`
+        instance with its `key`.
         """
         key = resource.key
 
-        self._resources[key] = resource
+        self._resources.setdefault(
+            key,
+            resource
+        )
 
         return ResourceHandle(key)
     
@@ -75,111 +38,42 @@ class ResourceManager:
         handle: ResourceHandle
     ):
         """
-        Get the `Resource` instance associated to
-        the `ResourceHandle` given as `handle` and
-        load the resource by calling its `.load()`
-        method.
+        Try to find the instance of the `Resource`
+        associated to the `key` that is in the
+        `handle` given, or load the resource, creating
+        the first instance, and return it.
 
-        This method will return a loaded instance
-        of this resource (could have been loaded
-        before by another call).
+        From `ResourceHandle` to `Resource` instance.
         """
-        resource = self._resources[handle.key]
+        key = handle.key
 
-        return await resource.load()
+        if key in self._instances:
+            return self._instances[key]
 
-    async def release(
-        self,
-        handle: ResourceHandle
-    ) -> 'ResourceManager':
-        """
-        Try to release the resource with the given
-        `handle`, which means that the internal
-        instance will be unloaded only if there are
-        no more references to it.
+        resource = self._resources[key]
 
-        This method will decrease the reference to
-        that resource by 1, and remove it if the
-        number of references reaches 0.
-        """
-        resource = self._resources.get(handle.key)
+        instance = await resource.load()
 
-        if resource is None:
-            return self
-        
-        if self._decrement_references(handle.key) == 0:
-            await resource.unload()
+        self._instances[key] = instance
 
-            del self._resources[handle.key]
+        return instance
 
-        return self
-    
     async def release_all(
         self
     ) -> None:
         """
-        Release all the instances and reset the
-        references counter and everything. This
-        must be called by the Executor when the
-        whole execution has finished.
+        Release all the instances and the resources
+        register. This must be called by the
+        Executor when the whole execution has
+        finished.
         """
         for key in list(self._instances):
             resource = self._resources[key]
             instance = self._instances[key]
 
-            await resource.unload(instance)
+            if instance is not None:
+                # await resource.unload(instance)
+                await resource.unload()
 
         self._instances.clear()
         self._resources.clear()
-        self._references.clear()
-        
-    def _increment_references(
-        self,
-        key: ResourceKey
-    ) -> int:
-        """
-        *For internal use only*
-
-        Increase by one the references counter of the
-        resource with the given `handle`.
-        
-        This method will return the number of referneces
-        after the update.
-        """
-        references = self._references.get(key, 0) + 1
-        self._references[key] = references
-
-        return references
-
-    def _decrement_references(
-        self,
-        key: ResourceKey
-    ) -> 'ResourceManager':
-        """
-        *For internal use only*
-
-        Decrease by one the references counter of the
-        resource with the given `handle`.
-
-        This method will return the number of referneces
-        after the update.
-
-        This method will raise an exception if the `key`
-        provided was not registered.
-        """
-        references = self._references.get(key)
-
-        if references is None:
-            raise KeyError(
-                f'Resource "{key}" is not registered.'
-            )
-
-        references -= 1
-
-        if references <= 0:
-            del self._references[key]
-            return 0
-
-        self._references[key] = references
-
-        return references

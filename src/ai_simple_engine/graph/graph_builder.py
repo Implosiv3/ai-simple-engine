@@ -100,9 +100,10 @@ class GraphBuilder:
         """
         expanded = operation.expand()
 
-        self._visit_atomic_operation(
-            expanded.operation,
-            operations
-        )
+        for output in expanded.values():
+            self._visit_operation(
+                output.operation,
+                operations
+            )
 
         return

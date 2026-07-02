@@ -1,7 +1,7 @@
 from ai_simple_engine.graph.operation.abstract.atomic_operation import AtomicOperation
 from ai_simple_engine.graph.input import Input
 from ai_simple_engine.graph.output import Output
-from ai_simple_engine.types.data_type.base import RESOURCE, OBJECT
+from ai_simple_engine.types.data_type.base import RESOURCE_HANDLE, OBJECT
 
 
 class AcquireResource(
@@ -10,25 +10,27 @@ class AcquireResource(
     """
     *Atomic Operation*
 
-    Acquire the `Resource` provided as input and
-    get the instance of it.
+    Acquire an instance of the `Resource` associated
+    to the `ResourceHandle` given as `resource_handle`
+    input. This will perform a `load` operation if the
+    resource was not previously load in the system.
 
     Inputs:
-    - `resource` (`RESOURCE`)
+    - `resource_handle` (`RESOURCE_HANDLE`)
 
     Outputs:
     - `instance` (`OBJECT`)
     """
     
-    resource = Input(RESOURCE)
+    resource_handle = Input(RESOURCE_HANDLE)
 
-    instance = Output(OBJECT)
+    resource = Output(OBJECT)
 
     async def execute(
         self,
         context
     ):
-        instance = await context.resources.acquire(self.resource)
+        instance = await context.resources.resolve(self.resource_handle)
 
         return {
             'instance': instance
