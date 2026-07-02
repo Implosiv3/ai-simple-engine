@@ -1,6 +1,6 @@
 from ai_simple_engine.graph.operation.abstract.composite_operation import CompositeOperation
 from ai_simple_engine.graph.operation.resolve_model_loader import ResolveModelLoader
-from ai_simple_engine.graph.operation.acquire_resource import AcquireResource
+from ai_simple_engine.graph.operation.load_model_resource import LoadModelResource
 from ai_simple_engine.graph.operation.create_model_resource import CreateModelResource
 from ai_simple_engine.graph.input import Input
 from ai_simple_engine.graph.output import Output
@@ -49,10 +49,8 @@ class AcquireModel(
             device = self.device
         )
 
-        loaded_model = AcquireResource(
-            resource_handle = model_resource.model_resource_handle
-        )
+        loaded_model = LoadModelResource(resource_handle = model_resource.model_resource_handle)
 
         return {
-            'model': loaded_model.resource
+            'model': loaded_model.loaded_model
         }
