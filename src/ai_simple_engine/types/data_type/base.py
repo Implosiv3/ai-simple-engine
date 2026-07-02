@@ -4,6 +4,9 @@ from ai_simple_engine.models.loaded_model import LoadedModel
 from ai_simple_engine.models.spec.base import ModelSpec
 from ai_simple_engine.device.base import Device
 from ai_simple_engine.types.audio import Audio
+from ai_simple_engine.types.latents import Latents
+from ai_simple_engine.types.embeddings import Embeddings
+from ai_simple_engine.types.noise_prediction import NoisePrediction
 from pathlib import Path
 from typing import Union, TypeVar, Generic
 
@@ -147,12 +150,90 @@ DEVICE = DataType(
     parent = None
 )
 
-
-# TODO: Move to the specific dependency (library)
-IMAGE = DataType(
-    name = 'Image',
-    runtime_type = 'PIL.Image.Image', # PIL.Image.Image, but I don't want import
+LATENTS = DataType(
+    name = 'Latents',
+    runtime_type = Latents,
     parent = None
 )
+EMBEDDINGS = DataType(
+    name = 'Embeddings',
+    runtime_type = Embeddings,
+    parent = None
+)
+NOISE_PREDICTION = DataType(
+    name = 'NoisePrediction',
+    runtime_type = NoisePrediction,
+    parent = None
+)
+
+
+
+
+
+
+# # TODO: Move to the specific dependency (library)
+# IMAGE = DataType(
+#     name = 'Image',
+#     runtime_type = 'PIL.Image.Image', # PIL.Image.Image, but I don't want import
+#     parent = None
+# )
+
+# """
+# TODO: This is not here, but I don't know
+# where it goes.
+# """
+# # Input: UNET   Output: UNET
+# LATENTS = DataType(
+#     name = 'Latents',
+#     runtime_type = '???',
+#     parent = None
+# )
+# # Input: EncodePrompt   Output: SampleLatents
+# EMBEDDING = DataType(
+#     name = 'Embedding',
+#     runtime_type = '???',
+#     parent = None
+# )
+# # Idk
+# NOISE = DataType(
+#     name = 'Noise',
+#     runtime_type = '???',
+#     parent = None
+# )
+# # Idk
+# """
+# porque en el futuro puede incluir:
+# embeddings
+# máscaras
+# pooled embeddings
+# etc.
+# """
+# PROMPT_CONDITIONING = DataType(
+#     name = 'PromptConditioning',
+#     runtime_type = '???',
+#     parent = None
+# )
+# # Idk
+# MASK = DataType(
+#     name = 'Mask',
+#     runtime_type = '???',
+#     parent = None
+# )
+# # Idk. Could be 'LATENTS'
+# # IMAGE_LATENTS = LATENTS
+# IMAGE_LATENTS = DataType(
+#     name = 'ImageLatents',
+#     runtime_type = '???',
+#     parent = None
+# )
+# # Idk
+# """
+# Si algún backend devuelve un scheduler preparado.
+# """
+# SCHEDULER_STATE = DataType(
+#     name = 'Scheduler',
+#     runtime_type = '???',
+#     parent = None
+# )
 
 
