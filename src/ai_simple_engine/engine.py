@@ -43,40 +43,6 @@ class Engine:
         self._runtime_value_resolvers = runtime_value_resolvers
         self._services = services
 
-
-        # self.settings: EngineSettings = settings
-        # self.model_repository = model_repository
-        # self.cache = cache
-        # self.resource_manager = resource_manager
-        # self.operation_runner = operation_runner
-
-        # self.runtime_value_resolvers = [
-        #     PortReferenceRuntimeValueResolver(),
-        #     ResourceHandleRuntimeValueResolver(),
-        # ]
-
-        # # TODO: Does this avoid repeated values (?)
-        # if runtime_value_resolvers:
-        #     self.runtime_value_resolvers.extend(runtime_value_resolvers)
-
-        # self._graph_builder = graph_builder
-        # # TODO: Am I actually using this (?)
-        # self._model_loader_registry = model_loader_registry
-
-        # self._executor = Executor(
-        #     graph_builder = self._graph_builder,
-        #     operation_runner = self.operation_runner,
-        #     runtime_value_resolvers = self.runtime_value_resolvers,
-        # )
-
-    # async def execute(
-    #     self,
-    #     targets: Union[Operation, PortReference, Iterable[Union[Operation, PortReference]]]
-    # ):
-    #     context = self.create_context()
-
-    #     return await self._executor.run(targets, context)
-    
     async def run(
         self,
         *targets: PortReference

@@ -35,6 +35,15 @@ class Operation(
         self.id = uuid4()
         self._connections: dict[str, object] = {}
         self._resolved_inputs: dict[str, object] = {}
+        """
+        *For internal use only*
+
+        The value of the inputs that will be used
+        when the operation is being executed. These
+        are the real values and will be load by the
+        executor just before performing the
+        operation, and cleared when it is done.
+        """
         
         unknown = set(kwargs) - self.inputs().keys()
         if unknown:
@@ -53,8 +62,6 @@ class Operation(
             port.validate(value)
 
             self._connections[name] = value
-            # Initialize the values to have them
-            setattr(self, name, value)
 
     def __init_subclass__(
         cls,
@@ -91,19 +98,10 @@ class Operation(
         """
         *For internal use only*
 
-        Method to load the `inputs` that have been 
-        resolved and must be used for the operation.
-
-        This method will temporary replace the
-        original inputs with the given ones, that
-        will be restored in the `_end_execution`
-        method.
+        Set the `inputs` provided as the resolved
+        inputs to be used in the operation.
         """
-        self._original_inputs = {}
-
-        for name, value in inputs.items():
-            self._original_inputs[name] = self._connections[name]
-            setattr(self, name, value)
+        self._resolved_inputs = inputs.copy()
 
     def _end_execution(
         self
@@ -111,17 +109,10 @@ class Operation(
         """
         *For internal use only*
 
-        Method to restore the original `inputs` after
-        the resolved have been used for the operation.
-
-        This method will restore the original inputs
-        after the resolved ones have been used to
-        perform the operation.
+        Clear the resolved inputs as the operation
+        has finished.
         """
-        for name, value in self._original_inputs.items():
-            setattr(self, name, value)
-
-        self._original_inputs.clear()
+        self._resolved_inputs.clear()
 
     @classmethod
     def inputs(

@@ -10,16 +10,10 @@ from ai_simple_engine.execution.executor import Executor
 from ai_simple_engine.models.repository.base import ModelRepository
 from ai_simple_engine.models.loaders.registry.base import ModelLoaderRegistry
 from ai_simple_engine.models.loaders.abstract import ModelLoader
-from ai_simple_engine.execution.runtime_value_resolver.resource_handle_resolver import ResourceHandleRuntimeValueResolver
 from ai_simple_engine.execution.runtime_value_resolver.port_reference_resolver import PortReferenceRuntimeValueResolver
-from ai_simple_engine.graph.operation.abstract.base import Operation
-from ai_simple_engine.types.data_type.base import DataType
 from ai_simple_engine.execution.runtime_value_resolver.abstract import RuntimeValueResolver
 from ai_simple_engine.models.backends.abstract import ModelBackend
-from ai_simple_engine.types.validator.abstract import DataTypeValidator
 from ai_simple_engine.settings.engine_settings import EngineSettings
-from ai_simple_engine.graph.operation.acquire_model import AcquireModel
-from ai_simple_engine.graph.operation.install_model import InstallModel
 from ai_simple_engine.plugins.plugin_context import PluginContext
 from ai_simple_engine.services.service_registry import ServiceRegistry, T
 from typing import Callable, Union
@@ -40,20 +34,8 @@ class EngineBuilder:
         self._model_loaders = []
         self._model_backends = []
         self._runtime_value_resolvers = [
-            PortReferenceRuntimeValueResolver(),
-            ResourceHandleRuntimeValueResolver()
+            PortReferenceRuntimeValueResolver()
         ]
-        """
-        TODO: This is, apparently, not needed. Commented
-        by now until I confirm it and remove it.
-        """
-        # self._operations = [
-        #     AcquireModel(),
-        #     InstallModel()
-        # ]
-        # self._data_types = []
-        # # TODO: What about the validators (?)
-        # self._data_type_validators = []
 
         self._instantiate_executor()
 
@@ -108,43 +90,6 @@ class EngineBuilder:
         self._model_loaders.append(loader)
 
         return self
-    
-    """
-    TODO: This is, apparently, not needed. Commented
-    by now until I confirm it and remove it.
-    """
-    # def add_operation(
-    #     self,
-    #     operation: Operation
-    # ) -> 'EngineBuilder':
-    #     self._ensure_not_built()
-
-    #     # TODO: What about repeated ones (?)
-    #     self._operations.append(operation)
-
-    #     return self
-    
-    # def add_data_type(
-    #     self,
-    #     data_type: DataType
-    # ) -> 'EngineBuilder':
-    #     self._ensure_not_built()
-
-    #     # TODO: What about repeated ones (?)
-    #     self._data_types.append(data_type)
-
-    #     return self
-
-    # def add_data_type_validator(
-    #     self,
-    #     validator: DataTypeValidator
-    # ) -> 'EngineBuilder':
-    #     self._ensure_not_built()
-
-    #     # TODO: What about repated ones (?)
-    #     self._data_type_validators.append(validator)
-
-    #     return self
     
     def add_runtime_value_resolver(
         self,

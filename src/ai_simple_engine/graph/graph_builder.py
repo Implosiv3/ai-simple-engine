@@ -136,4 +136,3 @@ class GraphBuilder:
                 replacement = expanded[value.name]
 
                 operation._connections[input_name] = replacement
-                setattr(operation, input_name, replacement)

@@ -43,7 +43,7 @@ class CreateModelResource(
             device = self.device
         )
 
-        model_resource_handle = context.resources.register(model_resource)
+        model_resource_handle = await context.resources.register(model_resource)
 
         return {
             'model_resource_handle': model_resource_handle
