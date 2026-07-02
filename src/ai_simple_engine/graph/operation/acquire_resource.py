@@ -19,7 +19,7 @@ class AcquireResource(
     - `resource_handle` (`RESOURCE_HANDLE`)
 
     Outputs:
-    - `instance` (`OBJECT`)
+    - `resource` (`OBJECT`)
     """
     
     resource_handle = Input(RESOURCE_HANDLE)
@@ -30,8 +30,8 @@ class AcquireResource(
         self,
         context
     ):
-        instance = await context.resources.resolve(self.resource_handle)
+        resource = await context.resources.resolve(self.resource_handle)
 
         return {
-            'instance': instance
+            'resource': resource
         }

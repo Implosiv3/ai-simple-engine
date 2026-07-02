@@ -100,10 +100,40 @@ class GraphBuilder:
         """
         expanded = operation.expand()
 
-        for output in expanded.values():
+        for port in expanded.values():
             self._visit_operation(
-                output.operation,
+                port.operation,
                 operations
             )
 
-        return
+        self._replace_references(
+            composite = operation,
+            expanded = expanded,
+            operations = operations
+        )
+    
+    def _replace_references(
+        self,
+        composite: CompositeOperation,
+        expanded: dict[str, PortReference],
+        operations: dict[UUID, Operation]
+    ) -> None:
+        """
+        *For internal use only*
+
+        Replace the references of a `CompositeOperation`
+        to act like if it didn't exist but the atomic
+        ones inside.
+        """
+        for operation in operations.values():
+            for input_name, value in operation._connections.items():
+                if not isinstance(value, PortReference):
+                    continue
+
+                if value.operation is not composite:
+                    continue
+
+                replacement = expanded[value.name]
+
+                operation._connections[input_name] = replacement
+                setattr(operation, input_name, replacement)

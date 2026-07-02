@@ -1,9 +1,7 @@
 from ai_simple_engine.graph.input import Input
 from ai_simple_engine.graph.output import Output
-from ai_simple_engine.graph.port_reference import PortReference
 from uuid import uuid4
-from abc import ABC, abstractmethod
-from typing import Union
+from abc import ABC
 
 
 class Operation(

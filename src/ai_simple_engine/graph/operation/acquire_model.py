@@ -31,7 +31,7 @@ class AcquireModel(
         type = DEVICE,
         default = CUDA
     )
-    
+
     model = Output(LOADED_MODEL)
     """
     The `LoadedModel` that will become as the model
@@ -54,5 +54,5 @@ class AcquireModel(
         )
 
         return {
-            'model': loaded_model.instance
+            'model': loaded_model.resource
         }
