@@ -1,13 +1,15 @@
 from ai_simple_engine.models.installed_model import InstalledModel
+from ai_simple_engine.models.info.abstract import ModelInfo
 from dataclasses import dataclass
 from typing import Generic, TypeVar, Union
 
 
-T = TypeVar('T')
+TInstance = TypeVar('TInstance')
+TInfo = TypeVar('TInfo', bound = ModelInfo)
 
 @dataclass(frozen = True)
 class LoadedModel(
-    Generic[T]
+    Generic[TInstance, TInfo]
 ):
     """
     A loaded model class including the model that is
@@ -15,7 +17,8 @@ class LoadedModel(
     """
 
     installed_model: InstalledModel
-    instance: T
+    instance: TInstance
+    info: TInfo
 
     @property
     def family(

@@ -34,7 +34,7 @@ class AcquireModel(
 
         """
         The specific loader will load the specific
-        model and return that instance.
+        model (and its info) and return that instance.
         """
         loaded_model = await loader.load(
             installed_model = self.installed_model,
