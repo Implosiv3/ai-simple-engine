@@ -1,4 +1,4 @@
-from ai_simple_engine.graph.operation.base import Operation
+from ai_simple_engine.graph.operation.abstract.atomic_operation import AtomicOperation
 from ai_simple_engine.resources.model_resource import ModelResource
 from ai_simple_engine.graph.input import Input
 from ai_simple_engine.graph.output import Output
@@ -7,7 +7,7 @@ from ai_simple_engine.device.base import CUDA
 
 
 class AcquireModel(
-    Operation
+    AtomicOperation
 ):
     """
     Receives an `installed_model` (a `InstalledModel` instance)

@@ -1,5 +1,7 @@
 from ai_simple_engine.graph.graph import Graph
-from ai_simple_engine.graph.operation.base import Operation
+from ai_simple_engine.graph.operation.abstract.base import Operation
+from ai_simple_engine.graph.operation.abstract.composite_operation import CompositeOperation
+from ai_simple_engine.graph.operation.abstract.atomic_operation import AtomicOperation
 from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.dependencies.dependency_finder import DependencyFinder
 from typing import Union, Iterable
@@ -50,22 +52,31 @@ class GraphBuilder:
     
     def _visit_operation(
         self,
-        operation: Operation,
+        operation: Union[AtomicOperation, CompositeOperation],
         operations: dict[UUID, Operation]
     ) -> None:
-        if operation.id in operations:
-            return
-        
-        expanded = operation.expand()
+        """
+        *For internal use only*
 
-        if expanded is not None:
-            self._visit_operation(
-                expanded.operation,
-                operations
-            )
+        Visit the `operation` provided to register
+        it.
+        """
+        if isinstance(operation, CompositeOperation):
+            return self._visit_composite_operation(operation, operations)
 
-            return
+        return self._visit_atomic_operation(operation, operations)
 
+    def _visit_atomic_operation(
+        self,
+        operation: AtomicOperation,
+        operations: dict[UUID, Operation]
+    ) -> None:
+        """
+        *For internal use only*
+
+        Visit an `AtomicOperation` to obtain the
+        output from it.
+        """
         operations[operation.id] = operation
 
         for dependency in self._dependency_finder.find(operation):
@@ -73,3 +84,25 @@ class GraphBuilder:
                 dependency,
                 operations
             )
+
+        return
+
+    def _visit_composite_operation(
+        self,
+        operation: CompositeOperation,
+        operations: dict[UUID, Operation]
+    ) -> None:
+        """
+        *For internal use only*
+
+        Decompose a `CompositeOperation` and visit
+        all the atomic operations in it.
+        """
+        expanded = operation.expand()
+
+        self._visit_atomic_operation(
+            expanded.operation,
+            operations
+        )
+
+        return

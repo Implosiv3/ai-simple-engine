@@ -1,4 +1,4 @@
-from ai_simple_engine.graph.operation.base import Operation
+from ai_simple_engine.graph.operation.abstract.base import Operation
 from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.resources.manager.base import ResourceManager
 from ai_simple_engine.models.repository.base import ModelRepository

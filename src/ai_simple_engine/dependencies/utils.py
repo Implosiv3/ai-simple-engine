@@ -1,9 +1,13 @@
-# from ai_simple_engine.graph.operation.base import Operation
 from ai_simple_engine.graph.port_reference import PortReference
-from ai_simple_engine.graph.operation.base import Operation
+from ai_simple_engine.graph.operation.abstract.base import Operation
 from collections.abc import Mapping, Sequence
 
 
+"""
+TODO: Do I need to change something here
+due to the new 'AtomicOperation' and
+'CompositeOperation' (?)
+"""
 def find_operations(
     operation: Operation
 ):

@@ -12,7 +12,7 @@ from ai_simple_engine.models.loaders.registry.base import ModelLoaderRegistry
 from ai_simple_engine.models.loaders.abstract import ModelLoader
 from ai_simple_engine.execution.runtime_value_resolver.resource_handle_resolver import ResourceHandleRuntimeValueResolver
 from ai_simple_engine.execution.runtime_value_resolver.port_reference_resolver import PortReferenceRuntimeValueResolver
-from ai_simple_engine.graph.operation.base import Operation
+from ai_simple_engine.graph.operation.abstract.base import Operation
 from ai_simple_engine.types.data_type.base import DataType
 from ai_simple_engine.execution.runtime_value_resolver.abstract import RuntimeValueResolver
 from ai_simple_engine.models.backends.abstract import ModelBackend

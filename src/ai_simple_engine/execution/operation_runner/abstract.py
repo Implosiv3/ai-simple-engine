@@ -1,5 +1,5 @@
 from ai_simple_engine.execution.execution_context import ExecutionContext
-from ai_simple_engine.graph.operation.base import Operation
+from ai_simple_engine.graph.operation.abstract.base import Operation
 from abc import ABC, abstractmethod
 
 

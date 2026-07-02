@@ -1,6 +1,6 @@
 from ai_simple_engine.graph.graph_validator import GraphValidator
 from ai_simple_engine.graph.graph_builder import GraphBuilder
-from ai_simple_engine.graph.operation.base import Operation
+from ai_simple_engine.graph.operation.abstract.base import Operation
 from ai_simple_engine.graph.operation.fingerprint.fingerprint_builder import OperationFingerprintBuilder
 from ai_simple_engine.graph.port_reference import PortReference
 from ai_simple_engine.exceptions.execution_error import ExecutionError

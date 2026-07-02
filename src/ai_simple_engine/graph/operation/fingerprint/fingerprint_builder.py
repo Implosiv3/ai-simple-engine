@@ -1,4 +1,4 @@
-from ai_simple_engine.graph.operation.base import Operation
+from ai_simple_engine.graph.operation.abstract.base import Operation
 from ai_simple_engine.graph.port_reference import PortReference
 from collections.abc import Mapping, Sequence
 from hashlib import sha256
