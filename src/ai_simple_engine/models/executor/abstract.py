@@ -1,4 +1,6 @@
-from abc import ABC
+from ai_simple_engine.models.loaded_model import LoadedModel
+from ai_simple_engine.models.info.abstract import ModelInfo
+from abc import ABC, abstractmethod
 
 
 class ModelExecutor(
@@ -16,3 +18,13 @@ class ModelExecutor(
     It doesn't download nor load the model, it
     just receives and uses it.
     """
+
+    @abstractmethod
+    def info(
+        self,
+        model: LoadedModel
+    ) -> ModelInfo:
+        """
+        Base metadata describing a loaded model.
+        """
+        ...
