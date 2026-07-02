@@ -1,9 +1,12 @@
 from ai_simple_engine.resources.handle.base import ResourceHandle
+from ai_simple_engine.resources.model_resource import ModelResource
 from ai_simple_engine.models.installed_model import InstalledModel
 from ai_simple_engine.models.loaded_model import LoadedModel
+from ai_simple_engine.models.loaders.abstract import ModelLoader
 from ai_simple_engine.models.spec.base import ModelSpec
 from ai_simple_engine.device.base import Device
 from ai_simple_engine.types.audio import Audio
+from ai_simple_engine.types.image import Image
 from pathlib import Path
 from typing import Union, TypeVar, Generic
 
@@ -102,8 +105,14 @@ BOOLEAN = DataType(
     runtime_type = bool,
     parent = None
 )
+# TODO: Duplicated, same as 'OBJECT'
 ANY = DataType(
     name = 'Any',
+    runtime_type = object,
+    parent = None
+)
+OBJECT = DataType(
+    name = 'Object',
     runtime_type = object,
     parent = None
 )
@@ -131,6 +140,16 @@ LOADED_MODEL = DataType(
     runtime_type = LoadedModel,
     parent = None
 )
+MODEL_RESOURCE = DataType(
+    name = 'ModelResource',
+    runtime_type = ModelResource,
+    parent = None
+)
+MODEL_LOADER = DataType(
+    name = 'ModelLoader',
+    runtime_type = ModelLoader,
+    parent = None
+)
 MODEL_SPEC = DataType(
     name = 'ModelSpec',
     runtime_type = ModelSpec,
@@ -144,6 +163,11 @@ AUDIO = DataType(
 DEVICE = DataType(
     name = 'Device',
     runtime_type = Device,
+    parent = None
+)
+IMAGE = DataType(
+    name = 'Image',
+    runtime_type = Image,
     parent = None
 )
 

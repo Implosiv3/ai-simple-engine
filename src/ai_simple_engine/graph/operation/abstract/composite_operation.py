@@ -11,7 +11,7 @@ class CompositeOperation(
     @abstractmethod
     def expand(
         self
-    ) -> PortReference:
+    ) -> dict[str, PortReference]:
         """
         The ability to expand it into different
         operations. It doesn't exist if it is a

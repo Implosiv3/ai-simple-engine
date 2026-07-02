@@ -7,6 +7,17 @@ from ai_simple_engine.types.data_type.base import MODEL_SPEC, INSTALLED_MODEL
 class InstallModel(
     AtomicOperation
 ):
+    """
+    *Atomic Operation*
+    
+    Install the model with the given `spec`.
+
+    Inputs:
+    - `spec` (`MODEL_SPEC`)
+
+    Outputs:
+    - `installed_model` (`INSTALLED_MODEL`)
+    """
 
     spec = Input(MODEL_SPEC)
     installed_model = Output(INSTALLED_MODEL)

@@ -4,6 +4,8 @@ from ai_simple_engine.models.loaded_model import LoadedModel
 from ai_simple_engine.device.base import Device
 from ai_simple_engine.models.loaders.abstract import ModelLoader
 from ai_simple_engine.resources.key.base import ResourceKey
+from ai_simple_engine.graph.port_reference import PortReference
+from typing import Union
 
 
 class ModelResource(
@@ -20,17 +22,17 @@ class ModelResource(
     ):
         return ResourceKey(
             category = 'model',
-            identifier = f'{self._model.provider}:{self._model.family}:{self._model.identifier}',
+            identifier = f'{self._installed_model.provider}:{self._installed_model.family}:{self._installed_model.identifier}',
             variant = str(self._device)
         )
 
     def __init__(
         self,
-        model: InstalledModel,
-        loader: ModelLoader,
-        device: Device
+        installed_model: InstalledModel,
+        loader: Union[ModelLoader, PortReference],
+        device: Union[Device, PortReference]
     ):
-        self._model = model
+        self._installed_model = installed_model
         self._loader = loader
         self._device = device
 
@@ -44,7 +46,7 @@ class ModelResource(
         provided.
         """
         return await self._loader.load(
-            self._model,
+            installed_model = self._installed_model,
             device = self._device
         )
     
