@@ -43,7 +43,7 @@ class AcquireModel(
         loader = ResolveModelLoader(installed_model = self.installed_model)
 
         model_resource = CreateModelResource(
-            model = self.installed_model,
+            installed_model = self.installed_model,
             loader = loader.loader,
             device = self.device
         )
